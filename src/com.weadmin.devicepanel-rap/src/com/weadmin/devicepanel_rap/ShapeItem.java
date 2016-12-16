@@ -11,7 +11,7 @@ public class ShapeItem extends Item {
 
 	private static final String REMOTE_TYPE = "d3svgdevicepanel.ShapeItem";
 	private final RemoteObject remoteObject;
-	private final SvgMap svgMap;
+	private final DevicePanelSvg svgMap;
 	private String value;
 	private int svgtype;
 	private String transform;
@@ -39,7 +39,7 @@ public class ShapeItem extends Item {
 	private String ery;
 
 	
-	public ShapeItem(SvgMap svgMap) {
+	public ShapeItem(DevicePanelSvg svgMap) {
 		super(svgMap, SWT.NONE);
 		this.svgMap=svgMap;
 		svgMap.addItem(this);
@@ -334,7 +334,7 @@ public class ShapeItem extends Item {
 		remoteObject.destroy();
 	}
 
-	private SvgMap getSvgMap() {
+	private DevicePanelSvg getSvgMap() {
 		return svgMap;
 		//return (SvgMap) getAdapter(WidgetAdapter.class).getParent();
 	}

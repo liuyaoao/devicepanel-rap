@@ -167,12 +167,12 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			//var selection = this._layer.selectAll( "g.item" )
 			//  .data( this._items, function( item ) { return item.id(); } );
 			//  alert(selection);
-			var head = document.getElementsByTagName('HEAD').item(0);
-			var style = document.createElement('link');
-			style.href = 'rwt-resources/main.css';
-			style.rel = 'stylesheet';
-			style.type = 'text/css';
-			head.appendChild(style);
+			// var head = document.getElementsByTagName('HEAD').item(0);
+			// var style = document.createElement('link');
+			// style.href = 'rwt-resources/main.css';
+			// style.rel = 'stylesheet';
+			// style.type = 'text/css';
+			// head.appendChild(style);
 			thatmap = this;
 			//��ʼ���˵�
 			this._initMenu();

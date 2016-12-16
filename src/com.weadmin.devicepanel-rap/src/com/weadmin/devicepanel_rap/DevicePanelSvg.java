@@ -193,14 +193,11 @@ public class DevicePanelSvg extends SVWidgetBase {
 	@Override
 	protected ArrayList<CustomRes> getCustomRes() {
 		ArrayList<CustomRes> res = new ArrayList<>();
-		res.add(new CustomRes("fishEyeCalendar.css", true, true));
-		res.add(new CustomRes("esl.js", true, false));
-		res.add(new CustomRes("zrender.js", true, false));
-		res.add(new CustomRes("jquery.js", true, false));
-		res.add(new CustomRes("echarts.min.js", true, false));
-		res.add(new CustomRes("piccolo2d.js", true, false));
-		res.add(new CustomRes("detailCharts.js", true, false));
-		res.add(new CustomRes("fishEyeCalendar.js", true, false));
+		res.add(new CustomRes("main.css", true, true));
+		res.add(new CustomRes("d3.v3.min.js", true, false));
+		res.add(new CustomRes("item-list.js", true, false));
+		res.add(new CustomRes("SvgMap.js", true, false));
+		// res.add(new CustomRes("ShapeItem.js", true, false));
 		res.add(new CustomRes("handler.js", true, false));
 		return res;
 	}

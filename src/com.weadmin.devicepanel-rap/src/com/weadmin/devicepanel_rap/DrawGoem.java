@@ -14,7 +14,7 @@ public class DrawGoem {
 	public static String crFillColor;
 	public static String crFillOpacity="1";
 	public static long lLineWith;
-	public static SvgMap svgchart;
+	public static DevicePanelSvg svgchart;
 	public static String sPenStyle;
 	public static float x1 = 0;
 	public static float y1 = 0;
