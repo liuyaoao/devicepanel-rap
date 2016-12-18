@@ -1,5 +1,9 @@
 package com.weadmin.devicepanel_rap.example;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,23 +32,15 @@ public class ExampleOne extends AbstractEntryPoint{
 //		parent.setLayout(null);
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Refresh");
-
+		this.readTxtFile("svg00.txt");
+		
 		DevicePanelSvg pjs = new DevicePanelSvg(parent, SWT.NONE);
 //		pjs.setBounds(20, 0, 1000, 600);
-		Date date = new Date("2016/12/6");
-		JSONObject color = new JSONObject();
-		color.put("package", "#8DB6CD");
-		pjs.setLineColor(color);
-		pjs.refresh(date,dataModle(date));
-		// JSONObject isDefaulOpenToday = new JSONObject();
-		// isDefaulOpenToday.put("isDefaulOpenToday", false);
-		pjs.setIsDefaulOpenToday(false);
 		pjs.setLayoutData(new GridData(GridData.FILL_BOTH));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ArrayList list = new ArrayList();
-				pjs.refresh(new Date("2016/10/1"),dataModle(new Date("2016/10/1")));
 			}
 		});
 	}
@@ -115,5 +111,27 @@ public class ExampleOne extends AbstractEntryPoint{
 		String s = (i<10?"0"+i:i+"");
 		return s;
 	}
+	private void readTxtFile(String filePath){
+        try {
+                String encoding="GBK";
+                File file=new File(filePath);
+                if(file.isFile() && file.exists()){ //判断文件是否存在
+                    InputStreamReader read = new InputStreamReader(
+                    new FileInputStream(file),encoding);//考虑到编码格式
+                    BufferedReader bufferedReader = new BufferedReader(read);
+                    String lineTxt = null;
+                    while((lineTxt = bufferedReader.readLine()) != null){
+                        System.out.println(lineTxt);
+                    }
+                    read.close();
+		        }else{
+		            System.out.println("找不到指定的文件-example");
+		        }
+        } catch (Exception e) {
+            System.out.println("读取文件内容出错-example");
+            e.printStackTrace();
+        }
+
+    }
 
 }

@@ -41,7 +41,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		this._selectnodeid = "";
 		this._statuss = []; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
 	};
-	eclipsesource.devicepanelsvgjs.prototype = {
+	d3svgdevicepanel.devicepanelsvgjs.prototype = {
 		ready : false,
 		addItem : function (item) {
 			this._items.add(item);
@@ -173,7 +173,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			// style.rel = 'stylesheet';
 			// style.type = 'text/css';
 			// head.appendChild(style);
-			thatmap = this;
+			var thatmap = this;
 			//��ʼ���˵�
 			this._initMenu();
 

@@ -108,7 +108,7 @@ public abstract class SVWidgetBase extends Composite {
 		return "d3svgdevicepanel."+ getWidgetName();
 	}
 
-	private String getRegisterPath(){
+	public String getRegisterPath(){
 		return getWidgetName()+"/";
 	}
 
@@ -173,7 +173,7 @@ public abstract class SVWidgetBase extends Composite {
 
 	}
 
-	private void register(ResourceManager resourceManager, String fileName) throws IOException {
+	public void register(ResourceManager resourceManager, String fileName) throws IOException {
 		ClassLoader classLoader = SVWidgetBase.class.getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream(RESOURCES_PATH + fileName);
 		try {
