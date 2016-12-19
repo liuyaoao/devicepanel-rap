@@ -17,7 +17,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		destructor : "destroy",
 
-		properties : ["barWidth", "spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata"],
+		properties : ["barWidth", "spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
 
 		events : ["Selection"]
 
@@ -25,12 +25,13 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 
 
 	d3svgdevicepanel.devicepanelsvgjs = function(properties) {
-		var parent = rap.getObject(properties.parent);
+		this._parent = rap.getObject(properties.parent);
 		// bindAll(this, [ "layout", "onReady", "onSend", "onRender","refreshSize"]);
+		this._svgTxt = "";
 		this._barWidth = 25;
 		this._spacing = 2;
 		this._items = new d3svgdevicepanel.ItemList();
-		this._svgMap = new d3svgdevicepanel.SvgMap(parent, this);
+		this._svgMap = new d3svgdevicepanel.SvgMap(this._parent, this);
 		this._updatedata = true;
 		this._tag = 0;
 		this._layer = null;
@@ -61,6 +62,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		initialize : function (svgMap) {
 			this._svgMap = svgMap;
 			this._layer = svgMap.getLayer("layer");
+
 		},
 		setTooltipdesc : function (tooltipdesc) {
 			this._tooltipdesc = tooltipdesc;
@@ -149,6 +151,21 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this._updateTimer1.setEnabled(true);
 			//var statusups=d3.selectAll(".up1");
 		},
+		setSvgTxt:function(svgTxt){
+			this._svgTxt = svgTxt || "";
+			var element = document.createElement( "div" );
+	    element.style.position = "absolute";
+	    element.style.left = "0";
+	    element.style.top = "0";
+	    element.style.width = "100%";
+	    element.style.height = "100%";
+		element.style.overflow="auto";
+		element.style.backgroundColor ="#7f707f";
+		//element.style.overflowy= "auto" ;
+		//element.style.overflowx= "auto" ;
+	    this._parent.append( element );
+			$(element).html(this._svgTxt);
+		},
 		setBarWidth : function (barWidth) {
 			alert("setBarWidth");
 			this._barWidth = barWidth;
@@ -163,16 +180,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 
 		render : function (svgMap) {
 
-			//this._xScale = d3.scale.linear().domain( [ 0, 1 ] ).range( [ 0, svgMap._width - svgMap._padding * 2 ] );
-			//var selection = this._layer.selectAll( "g.item" )
-			//  .data( this._items, function( item ) { return item.id(); } );
-			//  alert(selection);
-			// var head = document.getElementsByTagName('HEAD').item(0);
-			// var style = document.createElement('link');
-			// style.href = 'rwt-resources/main.css';
-			// style.rel = 'stylesheet';
-			// style.type = 'text/css';
-			// head.appendChild(style);
 			var thatmap = this;
 			//��ʼ���˵�
 			this._initMenu();

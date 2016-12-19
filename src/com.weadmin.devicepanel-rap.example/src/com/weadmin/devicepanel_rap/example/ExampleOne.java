@@ -31,11 +31,14 @@ public class ExampleOne extends AbstractEntryPoint{
 		parent.setLayout(new GridLayout());
 //		parent.setLayout(null);
 		Button button = new Button(parent, SWT.PUSH);
-		button.setText("Refresh");
-		this.readTxtFile("svg00.txt");
-		
+
+//		button.setText("Refresh");
+//		this.readTxtFile("svg00.txt");
+
 		DevicePanelSvg pjs = new DevicePanelSvg(parent, SWT.NONE);
 //		pjs.setBounds(20, 0, 1000, 600);
+		String sysoid = "";
+		pjs.addOneSvgPanel(sysoid);
 		pjs.setLayoutData(new GridData(GridData.FILL_BOTH));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -115,9 +118,9 @@ public class ExampleOne extends AbstractEntryPoint{
         try {
                 String encoding="GBK";
                 File file=new File(filePath);
-                if(file.isFile() && file.exists()){ //ÅÐ¶ÏÎÄ¼þÊÇ·ñ´æÔÚ
+                if(file.isFile() && file.exists()){ //ï¿½Ð¶ï¿½ï¿½Ä¼ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
                     InputStreamReader read = new InputStreamReader(
-                    new FileInputStream(file),encoding);//¿¼ÂÇµ½±àÂë¸ñÊ½
+                    new FileInputStream(file),encoding);//ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
                     BufferedReader bufferedReader = new BufferedReader(read);
                     String lineTxt = null;
                     while((lineTxt = bufferedReader.readLine()) != null){
@@ -125,10 +128,10 @@ public class ExampleOne extends AbstractEntryPoint{
                     }
                     read.close();
 		        }else{
-		            System.out.println("ÕÒ²»µ½Ö¸¶¨µÄÎÄ¼þ-example");
+		            System.out.println("ï¿½Ò²ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½-example");
 		        }
         } catch (Exception e) {
-            System.out.println("¶ÁÈ¡ÎÄ¼þÄÚÈÝ³ö´í-example");
+            System.out.println("ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½-example");
             e.printStackTrace();
         }
 
