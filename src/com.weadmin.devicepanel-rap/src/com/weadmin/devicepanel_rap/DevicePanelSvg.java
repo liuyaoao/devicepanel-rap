@@ -2,6 +2,8 @@ package com.weadmin.devicepanel_rap;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,19 +66,22 @@ public class DevicePanelSvg extends SVWidgetBase {
     	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
             bt[len]=(byte)temp;
             len++;
-            if(len>4){
-            	String tempStr = new String(bt,len-4,len);
-//            	String str = tempStr.substring(1,tempStr.length());
-            	if(tempStr.matches("<svg")){
-            		startIndex = len-4;
-            	}
-            }
+//             if(len>4){
+//             	String tempStr = new String(bt,len-4,len);
+// //            	String str = tempStr.substring(1,tempStr.length());
+//             	if(tempStr.matches("<svg")){
+//             		startIndex = len-4;
+//             	}
+//             }
         }
         inputStream.close();
     }catch(IOException ioe){
     	throw new IllegalArgumentException("Failed to load resources", ioe);
     }
-		svgTxt = new String(bt,startIndex,len);
+		svgTxt = new String(bt,0,len);
+		
+		int index = svgTxt.indexOf("<svg");
+		svgTxt = svgTxt.substring(index);
 		setSvgTxt(svgTxt);
     System.out.println("svg00.txt:----"+svgTxt);
 	}
