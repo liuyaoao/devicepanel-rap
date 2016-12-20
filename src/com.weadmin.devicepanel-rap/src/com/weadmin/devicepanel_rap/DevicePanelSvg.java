@@ -37,11 +37,9 @@ public class DevicePanelSvg extends SVWidgetBase {
 	 private String tooltipdesc;
 	 private String menudesc;
 	 private String[] tooltipdata;
-	 private final List<ShapeItem> items;
 
 	public DevicePanelSvg(Composite parent, int style) {
 		super(parent,style);
-		items = new LinkedList<ShapeItem>();
 		this.setTooltipdesc("端口信息\n端口类型：p1\n端口索引：p2\n端口描述：p3\n接口索引：p4\n端口状态：p5\n管理状态：p6\n接收流量：p7\n发送流量：p8\n速率   ：p9");
 		this.setMenudesc("打开端口:关闭端口:当前端口连接设备");
 
@@ -64,25 +62,20 @@ public class DevicePanelSvg extends SVWidgetBase {
 		int startIndex = 0;
     try {
     	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
-            bt[len]=(byte)temp;
-            len++;
-        }
-        inputStream.close();
+          bt[len]=(byte)temp;
+          len++;
+      }
+      inputStream.close();
     }catch(IOException ioe){
     	throw new IllegalArgumentException("Failed to load resources", ioe);
     }
 		svgTxt = new String(bt,0,len);
-
 		int index = svgTxt.indexOf("<svg");
 		svgTxt = svgTxt.substring(index);
 		setSvgTxt(svgTxt);
 		System.out.println("svg00.txt:----"+svgTxt);
 	}
 
-	public ShapeItem[] getItems() {
-		checkWidget();
-		return items.toArray( new ShapeItem[ 0 ] );
-	}
 	public String getMenudesc() {
 		checkWidget();
 		return menudesc;
@@ -127,10 +120,9 @@ public class DevicePanelSvg extends SVWidgetBase {
 
 	public void setTooltipdesc(String tooltipdesc) {
 		checkWidget();
-		if(this.tooltipdesc!=tooltipdesc)
-		{
-		this.tooltipdesc = tooltipdesc;
-		remoteObject.set( "tooltipdesc", tooltipdesc );
+		if(this.tooltipdesc!=tooltipdesc){
+			this.tooltipdesc = tooltipdesc;
+			remoteObject.set( "tooltipdesc", tooltipdesc );
 		}
 	}
 	/* 获取svg文件内容文本字符串*/
@@ -143,34 +135,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.svgTxt = svgTxt;
 		remoteObject.set( "svgTxt", svgTxt );
 	}
-
-	public int getBarWidth() {
-	    checkWidget();
-	    return barWidth;
-	  }
-
-	  public void setBarWidth( int width ) {
-	    checkWidget();
-	    if( width != barWidth ) {
-	      barWidth = width;
-	      remoteObject.set( "barWidth", width );
-	    }
-	  }
-
-	  public int getSpacing() {
-	    checkWidget();
-	    return spacing;
-	  }
-
-	  public void setSpacing( int width ) {
-	    checkWidget();
-	    if( width != spacing ) {
-	      spacing = width;
-	      remoteObject.set( "spacing", width );
-	    }
-	  }
-		private static JsonArray jsonArray(int[] values) {
-		// TODO use array.addAll in future versions
+	private static JsonArray jsonArray(int[] values) {
 		JsonArray array = new JsonArray();
 		for (int i = 0; i < values.length; i++) {
 			array.add(values[i]);
@@ -178,20 +143,11 @@ public class DevicePanelSvg extends SVWidgetBase {
 		return array;
 	}
 	private static JsonArray jsonArray(String[] values) {
-		// TODO use array.addAll in future versions
 		JsonArray array = new JsonArray();
 		for (int i = 0; i < values.length; i++) {
 			array.add(values[i]);
 		}
 		return array;
-	}
-
-	void addItem( ShapeItem item ) {
-		items.add( item );
-	}
-
-	void removeItem( ShapeItem item ) {
-		items.remove( item );
 	}
 
 	String getRemoteId() {
@@ -254,8 +210,9 @@ public class DevicePanelSvg extends SVWidgetBase {
 		res.add(new CustomRes("main.css", true, true));
 		res.add(new CustomRes("d3.v3.min.js", true, false));
 		res.add(new CustomRes("jquery.js", true, false));
-		res.add(new CustomRes("item-list.js", true, false));
-		res.add(new CustomRes("SvgMap.js", true, false));
+		res.add(new CustomRes("menuPanel.js", true, false));
+		res.add(new CustomRes("svgChartPanel.js", true, false));
+		// res.add(new CustomRes("SvgMap.js", true, false));
 		// res.add(new CustomRes("ShapeItem.js", true, false));
 		res.add(new CustomRes("handler.js", true, false));
 		return res;

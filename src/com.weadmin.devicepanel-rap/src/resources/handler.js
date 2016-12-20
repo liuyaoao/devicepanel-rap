@@ -14,24 +14,23 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			return new svgdevicepanel.devicepanelsvgjs(properties);
 		},
 		destructor : "destroy",
-		properties : ["barWidth", "spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
+		properties : ["spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
 		events : ["Selection"]
 	});
 
 	svgdevicepanel.devicepanelsvgjs = function(properties) {
 		this._parent = rap.getObject(properties.parent);
-		bindAll(this, [ "resizeLayout", "onReady", "onSend", "onRender","refreshSize"]);
+		bindAll(this, [ "resizeLayout", "onReady", "onSend", "onRender","refreshSize","portBeSelected"]);
 		this.element = document.createElement("div");
+		this.element.style.width = '100%';
+		this.element.style.height = '100%';
 		this._parent.append(this.element);
 		this._parent.addListener("Resize", this.resizeLayout);
 		this.ready = false;
 		this._svgTxt = "";
-		var area = this.parent.getClientArea();
+		var area = this._parent.getClientArea();
 		this._size = {width:area[2]||300,height:area[3]||300};
-		this.element.style.width = '100%';
-    this.element.style.height = '100%';
 
-		this._svgMap = new svgdevicepanel.SvgMap(this._parent, this);
 		this._updatedata = true;
 		this._tooltipdesc = "";
 		this._menudesc = "";
@@ -52,15 +51,17 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			if (this.element.parentNode) {
 				rap.off("render", this.onRender);
 				// Creates the graph inside the given container
-				this.fishEyeCalendar = new FishEyeCalendar({
-					basePath:PICCOLO2D_BASEPATH,
-					container:this.fishEyeContainer,
-					detailContainer:this.detailChartContainer
-				});
 				this.menuPanel = new svgdevicepanel.MenuPanel({
 					container:this.element,
 					menuDesc:this._menudesc,
 					clickMenuCall:this.clickMenuCall
+				});
+				this.svgChartPanel = new svgdevicepanel.SvgChartPanel({
+					container:this.element,
+					menuPanel:this.menuPanel,
+					svgTxt:this._svgTxt,
+					portBeSelectedCall:this.portBeSelected,
+					tooltipdesc:this._tooltipdesc
 				});
 				rap.on("send", this.onSend);
 				this.ready = true;
@@ -68,7 +69,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 
 		destroy : function () {
-			this._svgMap && this._svgMap.destroy();
+			// this._svgMap && this._svgMap.destroy();
 			rap.off("send", this.onSend);
 			(this.element && this.element.parentNode) ? this.element.parentNode.removeChild(this.element): null;
 		},
@@ -77,7 +78,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			// rap.getRemoteObject( this ).call( "handleCallRefreshData", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
 		},
 		clickMenuCall:function(eventName){
-			// TODO
+			this.portBeSelected(eventName, that._selectnodeid);
 		},
 		setTooltipdesc : function (tooltipdesc) {
 			this._tooltipdesc = tooltipdesc;
@@ -158,246 +159,9 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		setSvgTxt:function(svgTxt){
 			this._svgTxt = svgTxt || "";
-			var element = document.createElement( "div" );
-	    element.style.position = "absolute";
-	    element.style.left = "0";
-	    element.style.top = "0";
-	    element.style.width = "100%";
-	    element.style.height = "100%";
-			element.style.overflow="auto";
-			element.style.backgroundColor ="#7f707f";
-			$(element).html(this._svgTxt);
-			$(element).find("svg title").remove();
-			this._parent.append( element );
-		},
-		render : function (svgMap) {
-			var thatmap = this;
-			for (var i = 0; i < this._items.length; i++) {
-				var item = this._items[i];
-				var itemid = item.getItemid();
-				var svgtype = item.getSvgtype();
-				var lastindex = itemid.lastIndexOf("-");
-				var selection;
-				if (lastindex > -1) {
-					var parentid = "#" + itemid.substr(0, lastindex);
-					selection = this._layer.select(parentid);
-				} else {
-					selection = this._layer;
-				}
-				this._createElements(selection, svgtype, item);
-			}
-			if (this._updatedata) {
-				this._updatedata = false;
-				this._updateTimer1 = new rwt.client.Timer(1000);
-				this._updateTimer1.addEventListener("interval", this.changeColor, this);
-			}
-		},
-		// 0 grean 1
-		changeColor : function () {
-			try {
-				var sups = this._layer.selectAll(".up1");
-				if (this._tag == 0) {
-					this._tag = 1;
-					this._updateTimer1.stop();
-					this._updateTimer1.restart();
-					sups.style("fill", "#00FF00");
-				} else {
-					this._tag = 0;
-					this._updateTimer1.stop();
-					this._updateTimer1.restart();
-					sups.style("fill", "#006400");
-				}
-			} catch (e) {}
-		},
-		_initMenu : function () {
-			ulul.selectAll("a").on("click", function (d, i) {
-				var eventstring = 'openport';
-				if (i == 0) {
-					eventstring = 'openport';
-				} else if (i == 1) {
-					eventstring = 'closeport';
-				} else if (i == 2) {
-					eventstring = 'deviceip';
-				}
-				that._savedata(eventstring, that._selectnodeid);
-			});
-		},
-		_createElements : function (selection, svgtype, item) {
-			var that = this;
-			switch (svgtype) {
-			case 1:
-				this._createGroup(selection, item);
-				break;
-			case 2:
-				this._createPaths(selection, item);
-				break;
-			case 3:
-				this._createEllipse(selection, item)
-				break;
-			case 4:
-				this._createBars(selection, item);
-				break;
-			case 5:
-				this._createPolylines(selection, item);
-				break;
-			case 10:
-				this._createTexts(selection, item);
-			default:
-			}
 		},
 
-		_createGroup : function (selection, item) {
-
-			var items = selection.append("svg:g")
-				.attr("class", "item")
-				.attr("id", item.getItemid())
-				.attr("transform", item.getTransform())
-				.attr("opacity", 1.0);
-		},
-		_createEllipse : function (selection, item) {
-
-			var sel1 = selection.append("svg:ellipse")
-				.attr("cx", item.getEcx())
-				.attr("cy", item.getEcy())
-				.attr("rx", item.getErx())
-				.attr("ry", item.getEry())
-				.attr("fill", item.getFillcolor())
-				//.attr( "fill-opacity", item.getFillopacity())
-				.attr("stroke", item.getLinecolor())
-				.attr("stroke-linecap", "round")
-				.attr("stroke-linejoin", "round")
-				.attr("stroke-width", item.getLinewidth());
-			if (item.getSvid() != "") {
-				sel1.attr("id", item.getSvid());
-			}
-
-		},
-		_createBars : function (selection, item) {
-			var that = this;
-			var sel1 = selection.append("svg:rect")
-				.attr("x", item.getEcx())
-				.attr("y", item.getEcy())
-				.attr("width", item.getErx())
-				.attr("height", item.getEry())
-				.attr("fill", item.getFillcolor())
-				//.attr( "fill-opacity", item.getFillopacity())
-				.attr("stroke", item.getLinecolor())
-				.attr("stroke-linecap", "round")
-				.attr("stroke-linejoin", "round")
-				.attr("stroke-width", item.getLinewidth());
-
-			if (item.getSvid() != "") {
-				var cid = item.getSvid();
-				var indexid = cid.substring(1);
-				sel1.attr("id", cid);
-				var ttitel = sel1.append("svg:title");
-				var text2 = this.getTooltipdesc();
-				var text3 = text2.replace('p1', '-')
-					.replace('p2', indexid)
-					.replace('p3', '-')
-					.replace('p4', '-')
-					.replace('p5', '-')
-					.replace('p6', '-')
-					.replace('p7', "-")
-					.replace('p8', "-")
-					.replace('p9', "-");
-				ttitel.text(text3);
-				sel1.on("contextmenu", this.contextmenu);
-				sel1.on("click", function (d, i) {
-					that._savedata("portport" , cid)
-				});
-
-			}
-			if (item.getCssclass() != "") {
-				sel1.attr("class", item.getCssclass())
-				.attr("fill", "blue")
-				.attr("fill-opacity", "0")
-				.on("mouseover", function () {
-					d3.select(this)
-					.attr("fill-opacity", "0.5");
-				})
-				.on("mouseout", function () {
-					d3.select(this)
-					.attr("fill-opacity", "0");
-				});
-			}
-
-		},
-		//�����˵�
-		contextmenu : function () {
-			var position = d3.mouse(this);
-			thatmap._selectnodeid = d3.select(this).attr("id");
-			var topy=5;
-			d3.select('#panelmenu')
-			.style('position', 'absolute')
-			.style('left', position[0] + "px")
-			.style('top', topy + "px")
-			.style('display', 'inline-block')
-			.on('mouseleave', function () {
-				d3.select('#panelmenu').style('display', 'none');
-			});
-			d3.event.preventDefault();
-			//document.getElementById('nodeId').value= node
-		},
-		_createPolylines : function (selection, item) {
-			var that = this;
-			var sel1 = selection.append("svg:polyline")
-				.attr("points", item.getValue())
-				.attr("fill", item.getFillcolor())
-				//.attr( "fill-opacity", item.getFillopacity())
-				.attr("stroke", item.getLinecolor())
-				.attr("stroke-linecap", "round")
-				.attr("stroke-linejoin", "round")
-				.attr("transform", item.getTransform())
-				.attr("stroke-width", item.getLinewidth());
-			if (item.getSvid() != "") {
-				sel1.attr("id", item.getSvid());
-
-			}
-		},
-
-		_createTexts : function (selection, item) {
-
-			//var items = selection.append( "svg:g" )
-			// .attr( "class", "tt1" )
-			//.attr( "transform","translate("+item.getEcx()+","+item.getEcy()+")")
-			//.attr( "opacity", 1.0 );
-			selection.append("svg:text")
-			.attr("x", item.getEcx())
-			.attr("y", item.getEcy())
-			.attr("text-anchor", item.getTextanchor())
-			.style("fill", item.getFillcolor())
-			.style("font-family", item.getFontname())
-			.style("font-size", item.getFontsize())
-			.text(item.getValue());
-
-		},
-		_createPaths : function (selection, item) {
-			var that = this;
-			var vpath = selection.append("svg:path")
-				//.attr( "d",  "M 10 25 L 10 75L 60 75L 10 25")
-				// .attr( "class" , item.getCssclass() )
-				.attr("d", item.getValue())
-				.attr("transform", item.getTransform())
-				// .attr( "fill-opacity", item.getFillopacity())
-				.attr("fill", item.getFillcolor())
-				.attr("stroke", item.getLinecolor())
-				.attr("stroke-linecap", "round")
-				.attr("stroke-linejoin", "round")
-				.attr("stroke-width", item.getLinewidth());
-			if (item.getSvid() != "") {
-				vpath.attr("id", item.getSvid());
-			}
-			d3.select(".st8").on("mouseover", function (d, i) {
-				d3.select(".st8").transition().duration(300).style("fill", "#00ffff");
-			})
-			.on("mouseout", function (d, i) {
-				d3.select(".st8").transition().duration(300).style("fill", "#FF6347");
-			});
-		},
 		_updateElements : function (selection, svgtype) {
-			// this._updateBars( selection.select( "rect" ) );
-			// this._updateTexts( selection.select( "text" ) );
 			switch (svgtype) {
 			case 1:
 				this._updateGroup(selection.select("group"));
@@ -411,42 +175,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			case 4:
 				break;
 			default:
-
 			}
-			//this._updatePaths( selection.select( "path" ) );
-		},
-
-		_updateBars : function (selection) {
-			var that = this;
-			selection
-			.transition()
-			.duration(1000)
-			.attr("y", function (item, index) {
-				return that._getOffset(index);
-			})
-			.attr("width", function (item) {
-				return that._xScale(item.getValue());
-			})
-			.attr("height", that._barWidth)
-			.attr("fill", function (item) {
-				return item.getColor();
-			});
-		},
-
-		_updateTexts : function (selection) {
-			var that = this;
-			selection
-			.transition()
-			.duration(1000)
-			.attr("x", function (item) {
-				return that._svgMap._padding + 6 + that._xScale(item.getValue());
-			})
-			.attr("y", function (item, index) {
-				return that._getOffset(index) + that._barWidth / 2;
-			})
-			.text(function (item) {
-				return item.getText();
-			});
 		},
 		_updatePaths : function (selection) {
 			var that = this;
@@ -473,26 +202,18 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			.attr("opacity", 0.0)
 			.remove();
 		},
-
-		_savedata : function (index, data) {
+		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid
+		portBeSelected : function (eventName, svid) {
 			var remoteObject = rap.getRemoteObject(this);
 			remoteObject.notify("Selection", {
-				"index" : index,
-				"data" : data
+				"index" : eventName,
+				"data" : svid
 			});
 		},
-
-		_selectItem : function (index) {
-			var remoteObject = rap.getRemoteObject(this);
-			remoteObject.notify("Selection", {
-				"index" : index,
-				"data" : ""
-			});
-		},
-
+		// 大小自适应
 		resizeLayout : function() {
 			if (this.ready) {
-				var area = this.parent.getClientArea();
+				var area = this._parent.getClientArea();
 				if(Math.abs(area[2]-this._size.width)<5 && Math.abs(area[3]-this._size.height)<5){ return; }
 				this.refreshSize(area[0],area[1],area[2],area[3]);
 			}

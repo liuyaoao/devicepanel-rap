@@ -15,19 +15,16 @@
       // this.yBoxNum = options.yBoxNum;
       // this.xStart = options.xStart;
       // this.yStart = options.yStart;
-
-      this.canClickEnlarge = true;
-      this.isCtrlKeyDown = false;
       this.initElement();
       this.addEvent();
     },
     initElement:function(){
       var ele = document.createElement( "div" );
-      ele.setAttribute("id","panelmenu");
+      ele.setAttribute("id","menuPanel");
       ele.setAttribute("class","menu");
       ele.style.display="none";
-      this.container.append( ele );
-      var ulul = d3.select("#panelmenu").append("ul");
+      $(this.container).append( ele );
+      var ulul = d3.select("#menuPanel").append("ul");
 			var arraymenu = this.menuDesc.split(":");
 			for (var i = 0; i < arraymenu.length; i++) {
 				var lia = ulul.append("li").append("a").style("cursor", "pointer").text(arraymenu[i]);
@@ -35,31 +32,31 @@
     },
     addEvent:function(){
       var _this = this;
-      var ulul = d3.select("#panelmenu").select("ul");
+      var ulul = d3.select("#menuPanel").select("ul");
       ulul.selectAll("a").on("click", function (d, i) {
         var eventName = _this.eventNameMap[i] || 'openport';
 				_this.clickMenuCall && _this.clickMenuCall(eventName);
 			});
+      d3.select("#menuPanel").on('mouseleave', function(){
+        _this.hideMenuPanel();
+      });
     },
-    showMenuPanel:function(){
+    showMenuPanel:function(position){
       var topy=5;
-			d3.select('#panelmenu')
+			d3.select('#menuPanel')
 			.style('position', 'absolute')
 			.style('left', position[0] + "px")
 			.style('top', topy + "px")
-			.style('display', 'inline-block')
-			.on('mouseleave', function () {
-				d3.select('#panelmenu').style('display', 'none');
-			});
+			.style('display', 'inline-block');
     },
+    // setEnlargeBox:function(enlargeBox){
+    //   this.enlargeBox = enlargeBox;
+    // },
+    // setLineColor:function(lineColor){
+    //   this.lineColor = lineColor;
+    // },
     hideMenuPanel:function(){
-
-    },
-    setEnlargeBox:function(enlargeBox){
-      this.enlargeBox = enlargeBox;
-    },
-    setLineColor:function(lineColor){
-      this.lineColor = lineColor;
+      d3.select('#menuPanel').style('display', 'none');
     }
 
   };

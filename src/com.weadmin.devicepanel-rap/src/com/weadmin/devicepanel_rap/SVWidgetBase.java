@@ -103,9 +103,8 @@ public abstract class SVWidgetBase extends Composite {
 		remoteObject.call(name, parameters);
 	}
 
-
 	private String getRemoteName(){
-		return "d3svgdevicepanel."+ getWidgetName();
+		return "svgdevicepanel."+ getWidgetName();
 	}
 
 	public String getRegisterPath(){
