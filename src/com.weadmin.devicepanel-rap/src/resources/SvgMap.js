@@ -3,14 +3,12 @@
 *auther: yaoao.liu
 *svg to rap
 ********************************************/
-
-if (!window.d3svgdevicepanel) {
-  window.d3svgdevicepanel = {};
+if (!window.svgdevicepanel) {
+  window.svgdevicepanel = {};
 }
-d3svgdevicepanel.SvgMap = function( parent, renderer ) {
+svgdevicepanel.SvgMap = function( parent, renderer ) {
   this._renderer = renderer;
   this._element = this.createElement( parent );
-  this.createMenu( parent );
   this._padding = 20;
   this._svg = d3.select( this._element ).append( "svg" ).attr( "class", "SvgMap" )
   .attr("xmlns","http://www.w3.org/2000/svg" );
@@ -34,7 +32,7 @@ d3svgdevicepanel.SvgMap = function( parent, renderer ) {
   this._resize( parent.getClientArea() );
 };
 
-d3svgdevicepanel.SvgMap.prototype = {
+svgdevicepanel.SvgMap.prototype = {
 
   createElement: function( parent ) {
     var element = document.createElement( "div" );
@@ -50,14 +48,6 @@ d3svgdevicepanel.SvgMap.prototype = {
     parent.append( element );
     return element;
   },
-  createMenu:function( parent ){
-     var element = document.createElement( "div" );
-	 element.setAttribute("id","panelmenu");
-	 element.setAttribute("class","menu");
-	 element.style.display="none";
-	 parent.append( element );
-
-  },
 
   getLayer: function( name ) {
     var layer = this._svg.select( "g." + name );
@@ -69,7 +59,6 @@ d3svgdevicepanel.SvgMap.prototype = {
   },
 
   _resize: function( clientArea ) {
-    //alert("_resize");
     this._svg.attr( "width",  clientArea[ 2 ] ).attr( "height", clientArea[ 3 ] );
     this._scheduleUpdate( true );
   },

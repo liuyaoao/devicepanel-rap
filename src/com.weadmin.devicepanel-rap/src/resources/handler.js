@@ -4,71 +4,85 @@
  *svg to rap
  *******************************/
 var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
-
 (function() {
 	'use strict';
-	if (!window.d3svgdevicepanel) {
-		window.d3svgdevicepanel = {};
+	if (!window.svgdevicepanel) {
+		window.svgdevicepanel = {};
 	}
-	rap.registerTypeHandler("d3svgdevicepanel.devicepanelsvgjs", {
-
+	rap.registerTypeHandler("svgdevicepanel.devicepanelsvgjs", {
 		factory : function(properties) {
-			return new d3svgdevicepanel.devicepanelsvgjs(properties);
+			return new svgdevicepanel.devicepanelsvgjs(properties);
 		},
 		destructor : "destroy",
-
 		properties : ["barWidth", "spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
-
 		events : ["Selection"]
-
 	});
 
-
-	d3svgdevicepanel.devicepanelsvgjs = function(properties) {
+	svgdevicepanel.devicepanelsvgjs = function(properties) {
 		this._parent = rap.getObject(properties.parent);
-		// bindAll(this, [ "layout", "onReady", "onSend", "onRender","refreshSize"]);
+		bindAll(this, [ "resizeLayout", "onReady", "onSend", "onRender","refreshSize"]);
+		this.element = document.createElement("div");
+		this._parent.append(this.element);
+		this._parent.addListener("Resize", this.resizeLayout);
+		this.ready = false;
 		this._svgTxt = "";
-		this._barWidth = 25;
-		this._spacing = 2;
-		this._items = new d3svgdevicepanel.ItemList();
-		this._svgMap = new d3svgdevicepanel.SvgMap(this._parent, this);
+		var area = this.parent.getClientArea();
+		this._size = {width:area[2]||300,height:area[3]||300};
+		this.element.style.width = '100%';
+    this.element.style.height = '100%';
+
+		this._svgMap = new svgdevicepanel.SvgMap(this._parent, this);
 		this._updatedata = true;
-		this._tag = 0;
-		this._layer = null;
 		this._tooltipdesc = "";
 		this._menudesc = "";
 		this._tooltipdata = [];
-		this._updateTimer1 = null;
 		this._selectnodeid = "";
 		this._statuss = []; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
-	};
-	d3svgdevicepanel.devicepanelsvgjs.prototype = {
-		ready : false,
-		addItem : function (item) {
-			this._items.add(item);
-			//this._svgMap._scheduleUpdate();
-			//alert("addItem");
-		},
+		rap.on("render", this.onRender);
 
-		removeItem : function (item) {
-			this._items.remove(item);
-			//this._svgMap._scheduleUpdate();
+	};
+	svgdevicepanel.devicepanelsvgjs.prototype = {
+		onReady : function() {
+			this.ready = true;
+			// this.resizeLayout();
+			console.log("svgdevicepanel.devicepanelsvgjs is on ready!!");
+		},
+		onRender : function() {
+      var _this = this;
+			if (this.element.parentNode) {
+				rap.off("render", this.onRender);
+				// Creates the graph inside the given container
+				this.fishEyeCalendar = new FishEyeCalendar({
+					basePath:PICCOLO2D_BASEPATH,
+					container:this.fishEyeContainer,
+					detailContainer:this.detailChartContainer
+				});
+				this.menuPanel = new svgdevicepanel.MenuPanel({
+					container:this.element,
+					menuDesc:this._menudesc,
+					clickMenuCall:this.clickMenuCall
+				});
+				rap.on("send", this.onSend);
+				this.ready = true;
+			}
 		},
 
 		destroy : function () {
-			this._svgMap.destroy();
+			this._svgMap && this._svgMap.destroy();
+			rap.off("send", this.onSend);
+			(this.element && this.element.parentNode) ? this.element.parentNode.removeChild(this.element): null;
 		},
-
-		initialize : function (svgMap) {
-			this._svgMap = svgMap;
-			this._layer = svgMap.getLayer("layer");
-
+		onSend : function() {
+			// rap.getRemoteObject( this ).set( "model", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
+			// rap.getRemoteObject( this ).call( "handleCallRefreshData", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
+		},
+		clickMenuCall:function(eventName){
+			// TODO
 		},
 		setTooltipdesc : function (tooltipdesc) {
 			this._tooltipdesc = tooltipdesc;
 		},
 		getTooltipdesc : function () {
-
 			return this._tooltipdesc;
 		},
 		setMenudesc : function (menudesc) {
@@ -82,7 +96,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this._updateStatus(statuss);
 		},
 		setTooltipdata : function (tooltipdata) {
-
 			this._tooltipdata = tooltipdata;
 			var that = this;
 			tooltipdata.map(function (value, index) {
@@ -112,15 +125,11 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this._updateTimer1.setEnabled(false);
 			statuss.map(function (value, index) {
 				var nindex = index + 1;
-				//alert(nindex);
-				// alert(value);
 				var selection1;
 				var sid = "#pl" + nindex;
 				var sid1 = "#p" + nindex;
-				// alert(this._layer);
 				selection1 = d3.select(sid);
 				selection2 = d3.select(sid1);
-				//alert(selection1);
 				if (value == 0) {
 					selection1.attr("fill", "#d6d6d6"); //gray
 					selection2.attr("fill", "#d6d6d6"); //gray
@@ -129,7 +138,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					selection1.attr("class", "up1");
 					selection2.attr("fill", "#00FF00"); //
 				} else if (value == 2) {
-
 					selection1.attr("fill", "#FFFF00"); //yellow
 					selection2.attr("fill", "#FFFF00");
 				} else if (value == 3) {
@@ -145,11 +153,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					selection1.attr("fill", "#d6d6d6"); ////gray#808080
 					selection2.attr("fill", "#d6d6d6");
 				}
-
 			});
-
 			this._updateTimer1.setEnabled(true);
-			//var statusups=d3.selectAll(".up1");
 		},
 		setSvgTxt:function(svgTxt){
 			this._svgTxt = svgTxt || "";
@@ -159,33 +164,15 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 	    element.style.top = "0";
 	    element.style.width = "100%";
 	    element.style.height = "100%";
-		element.style.overflow="auto";
-		element.style.backgroundColor ="#7f707f";
-		//element.style.overflowy= "auto" ;
-		//element.style.overflowx= "auto" ;
-	    this._parent.append( element );
+			element.style.overflow="auto";
+			element.style.backgroundColor ="#7f707f";
 			$(element).html(this._svgTxt);
+			$(element).find("svg title").remove();
+			this._parent.append( element );
 		},
-		setBarWidth : function (barWidth) {
-			alert("setBarWidth");
-			this._barWidth = barWidth;
-			this._svgMap._scheduleUpdate();
-		},
-
-		setSpacing : function (spacing) {
-			alert("setSpacing");
-			this._spacing = spacing;
-			this._svgMap._scheduleUpdate();
-		},
-
 		render : function (svgMap) {
-
 			var thatmap = this;
-			//��ʼ���˵�
-			this._initMenu();
-
 			for (var i = 0; i < this._items.length; i++) {
-
 				var item = this._items[i];
 				var itemid = item.getItemid();
 				var svgtype = item.getSvgtype();
@@ -198,60 +185,31 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					selection = this._layer;
 				}
 				this._createElements(selection, svgtype, item);
-				// this._updateElements( selection, svgtype );
-
 			}
-			//alert("a");
 			if (this._updatedata) {
 				this._updatedata = false;
-				//selection=this._layer.selectAll( "ellipse" );
-				//this.changeColor(selection);
-				//alert("start");
 				this._updateTimer1 = new rwt.client.Timer(1000);
 				this._updateTimer1.addEventListener("interval", this.changeColor, this);
-				//this._updateTimer1.start();
-
-
 			}
-
 		},
 		// 0 grean 1
 		changeColor : function () {
 			try {
-				//alert(this._tag);
 				var sups = this._layer.selectAll(".up1");
 				if (this._tag == 0) {
 					this._tag = 1;
 					this._updateTimer1.stop();
 					this._updateTimer1.restart();
-					// alert(selection);
 					sups.style("fill", "#00FF00");
-					// rwt.client.Timer.once(this.changeColor(selection),this,30000)
-
 				} else {
 					this._tag = 0;
 					this._updateTimer1.stop();
 					this._updateTimer1.restart();
-					//alert(selection);
 					sups.style("fill", "#006400");
-					//rwt.client.Timer.once(this.changeColor(selection),this,30000)
 				}
 			} catch (e) {}
 		},
-		/**
-		 ** ��ʼ���˵�
-		 **/
 		_initMenu : function () {
-			var that = this;
-			var ulul = d3.select("#panelmenu").append("ul");
-			var menudes = this.getMenudesc();
-			var arraymenu = menudes.split(":");
-			for (var i = 0; i < arraymenu.length; i++) {
-				var lia = ulul.append("li").append("a")
-					.style("cursor", "pointer")
-					.text(arraymenu[i]);
-				//lia.on("click",function (d, i) { that._selectItem(i) });
-			}
 			ulul.selectAll("a").on("click", function (d, i) {
 				var eventstring = 'openport';
 				if (i == 0) {
@@ -263,10 +221,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				}
 				that._savedata(eventstring, that._selectnodeid);
 			});
-			//ulul.append("li").append("a")
-			//.style("cursor","pointer")
-			//.text("test1")
-			//.on("click",function () {that._selectItem(1) });
 		},
 		_createElements : function (selection, svgtype, item) {
 			var that = this;
@@ -289,12 +243,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			case 10:
 				this._createTexts(selection, item);
 			default:
-
 			}
-			// items.on( "click", function( datum, index ) { that._selectItem( index ); } );
-			//this._createBars( items );
-			//this._createTexts( items );
-
 		},
 
 		_createGroup : function (selection, item) {
@@ -341,7 +290,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				var cid = item.getSvid();
 				var indexid = cid.substring(1);
 				sel1.attr("id", cid);
-				//��ʼ��tooltip
 				var ttitel = sel1.append("svg:title");
 				var text2 = this.getTooltipdesc();
 				var text3 = text2.replace('p1', '-')
@@ -356,8 +304,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				ttitel.text(text3);
 				sel1.on("contextmenu", this.contextmenu);
 				sel1.on("click", function (d, i) {
-				that._savedata("portport" , cid)
-			});
+					that._savedata("portport" , cid)
+				});
 
 			}
 			if (item.getCssclass() != "") {
@@ -378,10 +326,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		//�����˵�
 		contextmenu : function () {
 			var position = d3.mouse(this);
-			//var topy=position[1]-12;
-			var topy=5;
-			//alert(position);
 			thatmap._selectnodeid = d3.select(this).attr("id");
+			var topy=5;
 			d3.select('#panelmenu')
 			.style('position', 'absolute')
 			.style('left', position[0] + "px")
@@ -390,7 +336,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			.on('mouseleave', function () {
 				d3.select('#panelmenu').style('display', 'none');
 			});
-
 			d3.event.preventDefault();
 			//document.getElementById('nodeId').value= node
 		},
@@ -545,8 +490,16 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			});
 		},
 
-		_getOffset : function (index) {
-			return this._svgMap._padding + index * (this._barWidth + this._spacing);
+		resizeLayout : function() {
+			if (this.ready) {
+				var area = this.parent.getClientArea();
+				if(Math.abs(area[2]-this._size.width)<5 && Math.abs(area[3]-this._size.height)<5){ return; }
+				this.refreshSize(area[0],area[1],area[2],area[3]);
+			}
+		},
+		refreshSize:function(left,top,width,height){
+			this._size = {width:width,height:height};
+			this.svgChartPanel.refreshSize(this._size);
 		}
 
 	};

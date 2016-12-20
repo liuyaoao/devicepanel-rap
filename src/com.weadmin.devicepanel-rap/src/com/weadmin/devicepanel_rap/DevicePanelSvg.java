@@ -28,7 +28,7 @@ import com.weadmin.devicepanel_rap.SVWidgetBase.CustomRes;
 
 public class DevicePanelSvg extends SVWidgetBase {
 
-	 private static final String REMOTE_TYPE = "d3svgdevicepanel.devicepanelsvgjs";
+	 private static final String REMOTE_TYPE = "svgdevicepanel.devicepanelsvgjs";
 	 private static final long serialVersionUID = -7580109674486263420L;
 	 private int barWidth = 25;
 	 private int spacing = 2;
@@ -66,24 +66,17 @@ public class DevicePanelSvg extends SVWidgetBase {
     	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
             bt[len]=(byte)temp;
             len++;
-//             if(len>4){
-//             	String tempStr = new String(bt,len-4,len);
-// //            	String str = tempStr.substring(1,tempStr.length());
-//             	if(tempStr.matches("<svg")){
-//             		startIndex = len-4;
-//             	}
-//             }
         }
         inputStream.close();
     }catch(IOException ioe){
     	throw new IllegalArgumentException("Failed to load resources", ioe);
     }
 		svgTxt = new String(bt,0,len);
-		
+
 		int index = svgTxt.indexOf("<svg");
 		svgTxt = svgTxt.substring(index);
 		setSvgTxt(svgTxt);
-    System.out.println("svg00.txt:----"+svgTxt);
+		System.out.println("svg00.txt:----"+svgTxt);
 	}
 
 	public ShapeItem[] getItems() {
@@ -254,29 +247,6 @@ public class DevicePanelSvg extends SVWidgetBase {
 	protected String getWidgetName() {
 		return "devicepanelsvgjs";
 	}
-
-	private void readTxtFile(String filePath){
-        try {
-                String encoding="GBK";
-                File file=new File(filePath);
-                if(file.isFile() && file.exists()){ //判断文件是否存在
-                    InputStreamReader read = new InputStreamReader(
-                    new FileInputStream(file),encoding);//考虑到编码格式
-                    BufferedReader bufferedReader = new BufferedReader(read);
-                    String lineTxt = null;
-                    while((lineTxt = bufferedReader.readLine()) != null){
-                        System.out.println(lineTxt);
-                    }
-                    read.close();
-		        }else{
-		            System.out.println("找不到指定的文件");
-		        }
-        } catch (Exception e) {
-            System.out.println("读取文件内容出错");
-            e.printStackTrace();
-        }
-
-    }
 
 	@Override
 	protected ArrayList<CustomRes> getCustomRes() {

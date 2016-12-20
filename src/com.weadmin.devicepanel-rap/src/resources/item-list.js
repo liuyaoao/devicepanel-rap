@@ -4,10 +4,10 @@
 /*
  * An array of items with additional add() and remove() methods.
  */
- if (!window.d3svgdevicepanel) {
-   window.d3svgdevicepanel = {};
+ if (!window.svgdevicepanel) {
+   window.svgdevicepanel = {};
  }
-d3svgdevicepanel.ItemList = function() {
+svgdevicepanel.ItemList = function() {
   this.add = function( item ) {
     this.push( item );
   };
@@ -18,4 +18,4 @@ d3svgdevicepanel.ItemList = function() {
     }
   };
 };
-d3svgdevicepanel.ItemList.prototype = Array.prototype;
+svgdevicepanel.ItemList.prototype = Array.prototype;
