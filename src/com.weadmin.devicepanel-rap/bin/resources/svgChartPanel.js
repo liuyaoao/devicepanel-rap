@@ -13,8 +13,10 @@
       this.svgTxt = options.svgTxt || '';
       this.tooltipdesc = options.tooltipdesc;
       this.portBeSelectedCall = options.portBeSelectedCall;
+      this.svgContainer = null;
+      this.svgJqObj = null; //svg的jquery对象
       this.portEleArr = [];
-      this.portHandleRectArr = []; //每个元素都是d3对象。
+      this.portHandleRectArr = []; //每个元素都是d3对象
       this.portTipTitleArr = [];
       this.selectSvid = '';
       // this.xStart = options.xStart;
@@ -24,19 +26,22 @@
       this.addEvent();
     },
     initElement:function(){
-      var element = document.createElement( "div" );
+      var element = this.svgContainer= document.createElement( "div" );
 	    element.style.position = "absolute";
 	    element.style.left = "0";
 	    element.style.top = "0";
-	    element.style.width = "100%";
-	    element.style.height = "100%";
+	    // element.style.width = "100%";
+	    // element.style.height = "100%";
 			element.style.overflow="auto";
 			element.style.backgroundColor ="#7f707f";
-			$(element).html(this.svgTxt);
-			$(element).find("svg title").remove();
+      element.style.transform = "scale(50%,50%) translate(-50%,-50%)";
+			$(element).addClass("svgContainer").html(this.svgTxt);
+			// $(element).find("svg title").remove();
+      this.svgJqObj = $(element).find("svg");
       $(this.container).append( element );
-      //获取网线端口元素数组。
-      //TODO
+      console.log("this.svgTxt------>:",this.svgTxt);
+      //重新格式一下svg的结构，获取网线端口元素数组。
+      this.formatSvgXml();
       this.createPortRect();
       this.createToolTip();
     },
@@ -56,6 +61,9 @@
   				d3.select(this).attr("fill-opacity", "0");
   			});
       }
+    },
+    formatSvgXml:function(){
+
     },
     createPortRect:function(){
       for(var i=0;i<this.portEleArr.length;i++){

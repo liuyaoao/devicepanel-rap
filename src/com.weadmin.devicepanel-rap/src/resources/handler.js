@@ -161,22 +161,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this._svgTxt = svgTxt || "";
 		},
 
-		_updateElements : function (selection, svgtype) {
-			switch (svgtype) {
-			case 1:
-				this._updateGroup(selection.select("group"));
-				break;
-			case 2:
-				this._updatePaths(selection.select("path"));
-				break;
-			case 3:
 
-				break;
-			case 4:
-				break;
-			default:
-			}
-		},
 		_updatePaths : function (selection) {
 			var that = this;
 			selection

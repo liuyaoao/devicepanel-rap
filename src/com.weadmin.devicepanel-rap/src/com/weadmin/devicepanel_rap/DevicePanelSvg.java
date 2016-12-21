@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -56,24 +58,31 @@ public class DevicePanelSvg extends SVWidgetBase {
 	public void addOneSvgPanel(String sysoid){
 		ClassLoader classLoader = SVWidgetBase.class.getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("resources/" + "svgs/svg00.svg");
-		byte bt[] = new byte[102400];
-    int len = 0;
-    int temp=0;          //所有读取的内容都使用temp接收
-		int startIndex = 0;
-    try {
-    	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
-          bt[len]=(byte)temp;
-          len++;
-      }
-      inputStream.close();
-    }catch(IOException ioe){
-    	throw new IllegalArgumentException("Failed to load resources", ioe);
-    }
-		svgTxt = new String(bt,0,len);
+		byte bt[] = new byte[1024000];
+	    int len = 0;
+	    int temp=0;          //所有读取的内容都使用temp接收
+			int startIndex = 0;
+	    try {
+	    	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
+	          bt[len]=(byte)temp;
+	          len++;
+	      }
+	      inputStream.close();
+	    }catch(IOException ioe){
+	    	throw new IllegalArgumentException("Failed to load resources", ioe);
+	    }
+	    
+	    try{
+	//		svgTxt = URLDecoder.decode(svgTxt, "UTF-8");
+	    	svgTxt = new String(bt,"UTF-8");
+	    }catch(UnsupportedEncodingException e){
+	    	throw new IllegalArgumentException("Failed to load resources", e);
+	    }
+	    
+	//	svgTxt = new String(bt,0,len);
 		int index = svgTxt.indexOf("<svg");
 		svgTxt = svgTxt.substring(index);
 		setSvgTxt(svgTxt);
-		System.out.println("svg00.txt:----"+svgTxt);
 	}
 
 	public String getMenudesc() {

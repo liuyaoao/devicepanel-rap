@@ -31,82 +31,20 @@ public class ExampleOne extends AbstractEntryPoint{
 		parent.setLayout(new GridLayout());
 //		parent.setLayout(null);
 		Button button = new Button(parent, SWT.PUSH);
-
-//		button.setText("Refresh");
-//		this.readTxtFile("svg00.txt");
-
-		DevicePanelSvg pjs = new DevicePanelSvg(parent, SWT.NONE);
-//		pjs.setBounds(20, 0, 1000, 600);
+		button.setText("Refresh");
+		
+		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
+//		deviceSvg.setBounds(20, 0, 1000, 600);
 		String sysoid = "";
-		pjs.addOneSvgPanel(sysoid);
-		pjs.setLayoutData(new GridData(GridData.FILL_BOTH));
+		deviceSvg.addOneSvgPanel(sysoid);
+		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ArrayList list = new ArrayList();
+				//TODO
 			}
 		});
-	}
-
-	/**
-	 * Simulation within one month of data
-	 * @return
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked", "static-access", "deprecation" })
-	public static List dataModle(Date date){
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH)+1;
-		int randcount = 0;
-		JSONObject json = null;
-		ArrayList list = new ArrayList();
-		int days = calendar.getActualMaximum(calendar.DATE);
-		for(int i=1;i<days+1;i++){
-			for(int j=0;j<24;j++){
-				randcount = (int) (Math.random()*7);
-				for(int k=0;k<randcount;k++){
-					json = new JSONObject();
-					json.put("savetime", year+"-"+(month<10?"0"+month:month)+"-"+(i<10?"0"+i:i) + " " +(j<10?"0"+j:j)+":"+getRandom(60)+":"+getRandom(60));
-					json.put("package", getRandom(100));
-//					json.put("retime", new java.text.DecimalFormat("#.##").format((double)(Math.random())));
-					list.add(json);
-				}
-			}
-		}
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		int prev = calendar.get(Calendar.DAY_OF_WEEK)-1;
-		calendar.add(Calendar.MONTH, -1);
-		int mon = calendar.getActualMaximum(calendar.DATE);
-		for(int i=mon;i>mon-prev;i--){
-			for(int j=0;j<24;j++){
-				randcount = (int) (Math.random()*7);
-				for(int k=0;k<randcount;k++){
-					json = new JSONObject();
-					json.put("savetime", year+"-"+(month-1<10?"0"+(month-1):month-1)+"-"+ (i<10?"0"+i:i) + " " +(j<10?"0"+j:j)+":"+getRandom(60)+":"+getRandom(60));
-					json.put("package", getRandom(100));
-					json.put("retime", new java.text.DecimalFormat("#.##").format((double)(Math.random())));
-					list.add(json);
-				}
-			}
-		}
-		calendar.add(Calendar.MONTH, 1);
-		if (calendar.get(Calendar.MONTH) <= new Date().getMonth()) {
-			int next = 42-(prev+calendar.getActualMaximum(calendar.DATE));
-			for(int i=1;i<next+1;i++){
-				for(int j=0;j<24;j++){
-					randcount = (int) (Math.random()*7);
-					for(int k=0;k<randcount;k++){
-						json = new JSONObject();
-						json.put("savetime", year+"-"+(month+1<10?"0"+(month+1):month+1)+"-"+(i<10?"0"+i:i) + " " +(j<10?"0"+j:j)+":"+getRandom(60)+":"+getRandom(60));
-						json.put("package", getRandom(100));
-						json.put("retime", new java.text.DecimalFormat("#.##").format((double)(Math.random())));
-						list.add(json);
-					}
-				}
-			}
-		}
-		return list;
 	}
 
 	public static String getRandom(int t){
