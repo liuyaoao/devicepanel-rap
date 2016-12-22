@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,17 +34,21 @@ public class ExampleOne extends AbstractEntryPoint{
 //		parent.setLayout(null);
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Refresh");
-		
+
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysoid = "";
-		deviceSvg.addOneSvgPanel(sysoid);
+		String sysObjId = "svg01"; //svg�ļ�����
+		deviceSvg.setStatuss(createStatusArr(50));
+		deviceSvg.setTooltipdata(createTooltipArr(50));
+
+		deviceSvg.addOneSvgPanel(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList list = new ArrayList();
-				//TODO
+
+				deviceSvg.refreshAll(createStatusArr(50),createTooltipArr(50));
+
 			}
 		});
 	}
@@ -52,27 +58,22 @@ public class ExampleOne extends AbstractEntryPoint{
 		String s = (i<10?"0"+i:i+"");
 		return s;
 	}
-	private void readTxtFile(String filePath){
-        try {
-                String encoding="GBK";
-                File file=new File(filePath);
-                if(file.isFile() && file.exists()){ //�ж��ļ��Ƿ�����
-                    InputStreamReader read = new InputStreamReader(
-                    new FileInputStream(file),encoding);//���ǵ�������ʽ
-                    BufferedReader bufferedReader = new BufferedReader(read);
-                    String lineTxt = null;
-                    while((lineTxt = bufferedReader.readLine()) != null){
-                        System.out.println(lineTxt);
-                    }
-                    read.close();
-		        }else{
-		            System.out.println("�Ҳ���ָ�����ļ�-example");
-		        }
-        } catch (Exception e) {
-            System.out.println("��ȡ�ļ����ݳ���-example");
-            e.printStackTrace();
-        }
-
-    }
+	private int[] createStatusArr(int num){
+		int[] statusArr = new int[num];
+		for(int i=0;i<num;i++){
+			statusArr[i] = getRangeRandomNum(0,4);
+		}
+		return statusArr;
+	}
+	private String[] createTooltipArr(int num){
+		String[] tooltipArr = new String[num];
+		for(int i=0;i<num;i++){
+			tooltipArr[i] = getRangeRandomNum(0,4)+"";
+		}
+		return tooltipArr;
+	}
+	private int getRangeRandomNum(int min, int max){
+		return (new Random().nextInt(max - min) + min);
+	}
 
 }

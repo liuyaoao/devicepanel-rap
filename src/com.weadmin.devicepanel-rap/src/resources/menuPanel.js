@@ -15,6 +15,8 @@
       // this.yBoxNum = options.yBoxNum;
       // this.xStart = options.xStart;
       // this.yStart = options.yStart;
+      this.selectedNodeId = 0;
+      this.isMouseIn = false;
       this.initElement();
       this.addEvent();
     },
@@ -35,28 +37,28 @@
       var ulul = d3.select("#menuPanel").select("ul");
       ulul.selectAll("a").on("click", function (d, i) {
         var eventName = _this.eventNameMap[i] || 'openport';
-				_this.clickMenuCall && _this.clickMenuCall(eventName);
+				_this.clickMenuCall && _this.clickMenuCall(eventName,_this.selectedNodeId);
 			});
-      d3.select("#menuPanel").on('mouseleave', function(){
+      d3.select("#menuPanel").on('mouseenter', function(){
+        _this.isMouseIn = true;
+      })
+      .on('mouseleave', function(){
+        _this.isMouseIn = false;
         _this.hideMenuPanel();
       });
     },
-    showMenuPanel:function(position){
-      var topy=5;
+    showMenuPanel:function(position, selectedNodeId){
+      this.selectedNodeId = selectedNodeId;
+      var height = $("#munuPanel").height();
 			d3.select('#menuPanel')
-			.style('position', 'absolute')
-			.style('left', position[0] + "px")
-			.style('top', topy + "px")
+			.style('left', (position.left+20) + "px")
+			.style('top', (position.top) + "px")
 			.style('display', 'inline-block');
     },
-    // setEnlargeBox:function(enlargeBox){
-    //   this.enlargeBox = enlargeBox;
-    // },
-    // setLineColor:function(lineColor){
-    //   this.lineColor = lineColor;
-    // },
     hideMenuPanel:function(){
-      d3.select('#menuPanel').style('display', 'none');
+      if(!this.isMouseIn){
+        d3.select('#menuPanel').style('display', 'none');
+      }
     }
 
   };

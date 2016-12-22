@@ -32,8 +32,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 
 	 private static final String REMOTE_TYPE = "svgdevicepanel.devicepanelsvgjs";
 	 private static final long serialVersionUID = -7580109674486263420L;
-	 private int barWidth = 25;
-	 private int spacing = 2;
+	 private String sysObjId = "";
 	 private String svgTxt = "";
 	 private int[] statuss;
 	 private String tooltipdesc;
@@ -45,44 +44,39 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.setTooltipdesc("端口信息\n端口类型：p1\n端口索引：p2\n端口描述：p3\n接口索引：p4\n端口状态：p5\n管理状态：p6\n接收流量：p7\n发送流量：p8\n速率   ：p9");
 		this.setMenudesc("打开端口:关闭端口:当前端口连接设备");
 
-		// ResourceManager resourceManager = RWT.getResourceManager();
-		// String str = "svgs/svg00.txt";
-		// try {
-		// 	register(resourceManager,str);
-		// } catch (IOException ioe) {
-		// 	throw new IllegalArgumentException("Failed to load resources", ioe);
-		// }
-		// this.readTxtFile(getRegisterPath()+"svgs/svg00.txt");
 	}
 
-	public void addOneSvgPanel(String sysoid){
+	public void addOneSvgPanel(String sysObjId){
+		this.sysObjId = sysObjId;
 		ClassLoader classLoader = SVWidgetBase.class.getClassLoader();
-		InputStream inputStream = classLoader.getResourceAsStream("resources/" + "svgs/svg00.svg");
-		byte bt[] = new byte[1024000];
-	    int len = 0;
-	    int temp=0;          //所有读取的内容都使用temp接收
-			int startIndex = 0;
-	    try {
-	    	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
-	          bt[len]=(byte)temp;
-	          len++;
-	      }
-	      inputStream.close();
-	    }catch(IOException ioe){
-	    	throw new IllegalArgumentException("Failed to load resources", ioe);
-	    }
-	    
-	    try{
-	//		svgTxt = URLDecoder.decode(svgTxt, "UTF-8");
-	    	svgTxt = new String(bt,"UTF-8");
-	    }catch(UnsupportedEncodingException e){
-	    	throw new IllegalArgumentException("Failed to load resources", e);
-	    }
-	    
-	//	svgTxt = new String(bt,0,len);
+		InputStream inputStream = classLoader.getResourceAsStream("resources/" + "svgs/"+sysObjId+".svg");
+		byte bt[] = new byte[5242880]; //最大可放5M大小字节
+    int len = 0;
+    int temp=0;          //所有读取的内容都使用temp接收
+		int startIndex = 0;
+    try {
+    	while((temp=inputStream.read())!=-1){    //当没有读取完时，继续读取
+          bt[len]=(byte)temp;
+          len++;
+      }
+      inputStream.close();
+    }catch(IOException ioe){
+    	throw new IllegalArgumentException("Failed to load resources", ioe);
+    }
+    try{
+//		svgTxt = URLDecoder.decode(svgTxt, "UTF-8");
+    	svgTxt = new String(bt,"UTF-8");
+    }catch(UnsupportedEncodingException e){
+    	throw new IllegalArgumentException("Failed to load resources", e);
+    }
 		int index = svgTxt.indexOf("<svg");
 		svgTxt = svgTxt.substring(index);
 		setSvgTxt(svgTxt);
+	}
+	public void refreshAll(int[] statuss, String[] tooltipdata) {
+		setStatuss(statuss);
+		setTooltipdata(tooltipdata);
+		super.callRemoteMethod("refreshAll", JsonObject.readFrom("{}"));
 	}
 
 	public String getMenudesc() {
@@ -203,7 +197,6 @@ public class DevicePanelSvg extends SVWidgetBase {
 			Event event = new Event();
 			event.text = parameters.get("index").asString();
 			event.data =  parameters.get("data");
-			//event.item = items.get(event.index);
 			notifyListeners(SWT.Selection, event);
 		}
 	}
@@ -221,8 +214,6 @@ public class DevicePanelSvg extends SVWidgetBase {
 		res.add(new CustomRes("jquery.js", true, false));
 		res.add(new CustomRes("menuPanel.js", true, false));
 		res.add(new CustomRes("svgChartPanel.js", true, false));
-		// res.add(new CustomRes("SvgMap.js", true, false));
-		// res.add(new CustomRes("ShapeItem.js", true, false));
 		res.add(new CustomRes("handler.js", true, false));
 		return res;
 	}

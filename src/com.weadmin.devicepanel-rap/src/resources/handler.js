@@ -14,6 +14,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			return new svgdevicepanel.devicepanelsvgjs(properties);
 		},
 		destructor : "destroy",
+		methods: ["refreshAll"],
 		properties : ["spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
 		events : ["Selection"]
 	});
@@ -54,15 +55,21 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				this.menuPanel = new svgdevicepanel.MenuPanel({
 					container:this.element,
 					menuDesc:this._menudesc,
-					clickMenuCall:this.clickMenuCall
+					clickMenuCall:function(eventName,svid){
+						_this.clickMenuCall(eventName,svid);
+					}
 				});
 				this.svgChartPanel = new svgdevicepanel.SvgChartPanel({
 					container:this.element,
 					menuPanel:this.menuPanel,
 					svgTxt:this._svgTxt,
-					portBeSelectedCall:this.portBeSelected,
+					statusArr:this._statuss,
+					portBeSelectedCall:function(eventName,svid){
+						_this.portBeSelected(eventName,svid);
+					},
 					tooltipdesc:this._tooltipdesc
 				});
+				setTimeout(function(){ _this.refreshAll(); }, 100);
 				rap.on("send", this.onSend);
 				this.ready = true;
 			}
@@ -71,14 +78,16 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		destroy : function () {
 			// this._svgMap && this._svgMap.destroy();
 			rap.off("send", this.onSend);
+			this.svgChartPanel && this.svgChartPanel.dispose();
 			(this.element && this.element.parentNode) ? this.element.parentNode.removeChild(this.element): null;
 		},
 		onSend : function() {
 			// rap.getRemoteObject( this ).set( "model", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
 			// rap.getRemoteObject( this ).call( "handleCallRefreshData", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
 		},
-		clickMenuCall:function(eventName){
-			this.portBeSelected(eventName, that._selectnodeid);
+		clickMenuCall:function(eventName,selectedNodeId){
+			this._selectnodeid = selectedNodeId;
+			this.portBeSelected(eventName, selectedNodeId);
 		},
 		setTooltipdesc : function (tooltipdesc) {
 			this._tooltipdesc = tooltipdesc;
@@ -93,99 +102,19 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			return this._menudesc;
 		},
 		setStatuss : function (statuss) {
+			console.log('statusArr:',statuss);
 			this._statuss = statuss;
-			this._updateStatus(statuss);
 		},
 		setTooltipdata : function (tooltipdata) {
 			this._tooltipdata = tooltipdata;
-			var that = this;
-			tooltipdata.map(function (value, index) {
-				var nindex = index + 1;
-				var nid = "#c" + nindex;
-				var selection1 = d3.select(nid);
-				selection1.text("");
-				var text2 = that.getTooltipdesc();
-				if (value != null) {
-					var values = value.split(":");
-					if (values.length > 0) {
-						var text3 = text2.replace('p1', values[0])
-							.replace('p2', values[1])
-							.replace('p3', values[2])
-							.replace('p4', values[3])
-							.replace('p5', values[4])
-							.replace('p6', values[5])
-							.replace('p7', values[6])
-							.replace('p8', values[7])
-							.replace('p9', values[8]);
-						selection1.append("svg:title").text(text3);
-					}
-				}
-			});
-		},
-		_updateStatus : function (statuss) {
-			this._updateTimer1.setEnabled(false);
-			statuss.map(function (value, index) {
-				var nindex = index + 1;
-				var selection1;
-				var sid = "#pl" + nindex;
-				var sid1 = "#p" + nindex;
-				selection1 = d3.select(sid);
-				selection2 = d3.select(sid1);
-				if (value == 0) {
-					selection1.attr("fill", "#d6d6d6"); //gray
-					selection2.attr("fill", "#d6d6d6"); //gray
-				} else if (value == 1) {
-					selection1.attr("fill", "#006400"); //green #00FF00 lightgreen
-					selection1.attr("class", "up1");
-					selection2.attr("fill", "#00FF00"); //
-				} else if (value == 2) {
-					selection1.attr("fill", "#FFFF00"); //yellow
-					selection2.attr("fill", "#FFFF00");
-				} else if (value == 3) {
-					selection1.attr("fill", "#FF0000"); //red
-					selection2.attr("fill", "#FF0000");
-				} else if (value == 4) {
-					selection1.attr("fill", "#0000FF"); //blue
-					selection2.attr("fill", "#0000FF");
-				} else if (value == 5) {
-					selection1.attr("fill", "#FFA500"); //orange
-					selection2.attr("fill", "#FFA500");
-				} else {
-					selection1.attr("fill", "#d6d6d6"); ////gray#808080
-					selection2.attr("fill", "#d6d6d6");
-				}
-			});
-			this._updateTimer1.setEnabled(true);
 		},
 		setSvgTxt:function(svgTxt){
 			this._svgTxt = svgTxt || "";
 		},
-
-
-		_updatePaths : function (selection) {
-			var that = this;
-			selection
-			.transition()
-			.duration(1000)
-			.attr("d", function (item) {
-				return item.getValue();
-			});
-		},
-		_updateGroup : function (selection) {
-			var that = this;
-			selection
-			.transition()
-			.duration(1000)
-			.attr("transform", function (item) {
-				return item.getTransform();
-			});
-		},
-		_removeElements : function (selection) {
-			selection
-			.transition()
-			.duration(400)
-			.attr("opacity", 0.0)
-			.remove();
+		refreshAll:function(){ //更新所有显示。状态和提示。
+			console.log('refreshAll!!!!!!!!!!');
+			this.svgChartPanel.updateStatus(this._statuss);
+			this.svgChartPanel.updateTooltip(this._tooltipdata);
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid
 		portBeSelected : function (eventName, svid) {
@@ -227,6 +156,12 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		window.setTimeout(function() {
 			func.apply(context);
 		}, 0);
+	};
+	var randomNumBoth = function(Min,Max){
+      var Range = Max - Min;
+      var Rand = Math.random();
+      var num = Min + Math.round(Rand * Range); //四舍五入
+      return num;
 	};
 
 }());
