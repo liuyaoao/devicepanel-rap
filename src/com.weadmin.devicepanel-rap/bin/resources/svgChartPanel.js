@@ -134,6 +134,28 @@
     //   this.lineColor = lineColor;
     // },
     refreshSize:function(){
+    },
+    formatSvgTxt:function(){
+      var paramNameMap = {"SysOid":"sysObjId", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
+      var v_cpEleArr = document.getElementsByTagName("v:cp");
+      for(var i=0;i<v_cpEleArr.length;i++){
+        var el = $(v_capEleArr[i]);
+        var jq_parent = el.closest('g');
+        var nameCn = el.attr('v:lbl');
+        var value = el.attr('v:val');
+        var nameKey = paramNameMap[nameCn] || "default";
+        jq_parent.attr('class',nameKey+'_'+value);
+        if(nameCn == '端口号'){
+          portEleArr.push(jq_parent);
+        }else if(nameCn == '端口灯号'){
+          portLightEleArr.push(jq_parent);
+        }
+      }
+    },
+    getValueFromStr:function(str){
+      var start = str.indexOf('(');
+      var end = str.indexOf(')');
+      return str.subString(start,end+1);
     }
 
   };
