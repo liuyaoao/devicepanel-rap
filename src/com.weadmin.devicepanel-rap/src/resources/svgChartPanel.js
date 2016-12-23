@@ -24,7 +24,8 @@
       this.blinkFlag = 0; //
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
-      this.statusColorMap = {"":"#d6d6d6", 0:"#d6d6d6", 1:"#006400", 2:"#FFFF00", 3:"#FF0000", 4:"#0000FF", 5:"#FFA500"};
+      // 默认：黑色， 0：深灰色， 1：深绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
+      this.statusColorMap = {"":"#080808", 0:"#464141", 1:"#006400", 2:"#FFFF00", 3:"#FF0000", 4:"#0000FF", 5:"#FFA500"};
       // this.xStart = options.xStart;
       // this.yStart = options.yStart;
       this.blinkLightMap = {}; //哪些指示灯需求闪烁。
@@ -150,14 +151,14 @@
     startIndicatorLightBlink:function(){
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
-        g_el.find("path").css("fill","red");
+        var colorValue = this.statusColorMap[this.statusArr[+key] ||""];
+        g_el.find("path").css("fill",colorValue);
       }
     },
     stopIndicatorLightBlink:function(){
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
-        var colorValue = this.statusColorMap[this.statusArr[+key] ||""];
-        g_el.find("path").css("fill",colorValue);
+        g_el.find("path").css("fill","black");
       }
     },
     // 更新端口状态
