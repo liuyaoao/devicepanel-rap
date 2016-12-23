@@ -21,7 +21,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 
 	svgdevicepanel.devicepanelsvgjs = function(properties) {
 		this._parent = rap.getObject(properties.parent);
-		bindAll(this, [ "resizeLayout", "onReady", "onSend", "onRender","refreshSize","portBeSelected","getSizeFromSvg"]);
+		bindAll(this, [ "resizeLayout", "onSend", "onRender","refreshSize","portBeSelected","getSizeFromSvg"]);
 		this.element = document.createElement("div");
 		// this.element.style.width = '100%';
 		// this.element.style.height = '100%';
@@ -42,11 +42,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 
 	};
 	svgdevicepanel.devicepanelsvgjs.prototype = {
-		onReady : function() {
-			this.ready = true;
-			// this.resizeLayout();
-			console.log("svgdevicepanel.devicepanelsvgjs is on ready!!");
-		},
 		onRender : function() {
       var _this = this;
 			if (this.element.parentNode) {

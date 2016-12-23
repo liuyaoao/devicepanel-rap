@@ -43,7 +43,7 @@ public class ExampleOne extends AbstractEntryPoint{
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysObjId = "svg01"; //svg file name.
+		String sysObjId = "svg05"; //svg file name.
 		deviceSvg.setStatuss(createStatusArr(50));
 		deviceSvg.setTooltipdata(createTooltipArr(50));
 		deviceSvg.addOneSvgPanel(sysObjId);

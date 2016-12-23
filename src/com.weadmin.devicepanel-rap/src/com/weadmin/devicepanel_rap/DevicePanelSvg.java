@@ -194,7 +194,6 @@ public class DevicePanelSvg extends SVWidgetBase {
 		JsonValue sizeValue = properties.get( "svgSize" );
       if( sizeValue != null ) {
         String sizeStr = sizeValue.asString();
-        
 				JsonObject obj = JsonObject.readFrom(sizeStr);
 				this.svgSize = obj;
 				System.out.println("svgSize:"+sizeStr);
