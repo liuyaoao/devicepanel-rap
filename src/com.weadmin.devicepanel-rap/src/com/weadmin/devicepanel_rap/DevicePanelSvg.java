@@ -34,6 +34,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 	 private static final long serialVersionUID = -7580109674486263420L;
 	 private String sysObjId = "";
 	 private String svgTxt = "";
+	 private JsonObject svgSize = null;
 	 private int[] statuss;
 	 private String tooltipdesc;
 	 private String menudesc;
@@ -77,6 +78,10 @@ public class DevicePanelSvg extends SVWidgetBase {
 		setStatuss(statuss);
 		setTooltipdata(tooltipdata);
 		super.callRemoteMethod("refreshAll", JsonObject.readFrom("{}"));
+	}
+	public void refreshSize(JsonObject size){
+		this.svgSize = size;
+		super.callRemoteMethod("refreshSize",this.svgSize);
 	}
 
 	public String getMenudesc() {
@@ -138,6 +143,9 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.svgTxt = svgTxt;
 		remoteObject.set( "svgTxt", svgTxt );
 	}
+	public JsonObject getSvgSize(){
+		return this.svgSize;
+	}
 	private static JsonArray jsonArray(int[] values) {
 		JsonArray array = new JsonArray();
 		for (int i = 0; i < values.length; i++) {
@@ -183,7 +191,16 @@ public class DevicePanelSvg extends SVWidgetBase {
 	}
 	@Override
 	protected void handleSetProp(JsonObject properties) {
-		//  System.out.println("handleSetProp from the js trigger!!");
+		JsonValue sizeValue = properties.get( "svgSize" );
+      if( sizeValue != null ) {
+        String sizeStr = sizeValue.asString();
+        
+				JsonObject obj = JsonObject.readFrom(sizeStr);
+				this.svgSize = obj;
+				System.out.println("svgSize:"+sizeStr);
+				System.out.println("svgSize obj.width:"+obj.get("width"));
+				System.out.println("svgSize obj.height:"+obj.get("height"));
+      }
 	}
 
 	@Override

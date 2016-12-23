@@ -12,9 +12,6 @@
       this.menuDesc = options.menuDesc;
       this.clickMenuCall = options.clickMenuCall;
       this.eventNameMap = {"":"openport", "0":"openport", "1":"closeport", "2":"deviceip"};
-      // this.yBoxNum = options.yBoxNum;
-      // this.xStart = options.xStart;
-      // this.yStart = options.yStart;
       this.selectedNodeId = 0;
       this.isMouseIn = false;
       this.initElement();

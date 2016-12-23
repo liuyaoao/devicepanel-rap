@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.eclipse.rap.json.JsonObject;
+import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,21 +36,46 @@ public class ExampleOne extends AbstractEntryPoint{
 //		parent.setLayout(null);
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Refresh");
+		Button zoomInBtn = new Button(parent, SWT.PUSH);
+		zoomInBtn.setText("zoomIn(+)");
+		Button zoomOutBtn = new Button(parent, SWT.PUSH);
+		zoomOutBtn.setText("zoomOut(-)");
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysObjId = "svg01"; //svgÎÄ¼þÃû¡£
+		String sysObjId = "svg01"; //svg file name.
 		deviceSvg.setStatuss(createStatusArr(50));
 		deviceSvg.setTooltipdata(createTooltipArr(50));
-
 		deviceSvg.addOneSvgPanel(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				JsonObject tempSize = deviceSvg.getSvgSize();
 				deviceSvg.refreshAll(createStatusArr(50),createTooltipArr(50));
 
+			}
+		});
+		zoomInBtn.addSelectionListener(new SelectionAdapter() { //zoom in (+)
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				JsonObject tempSize = deviceSvg.getSvgSize();
+				double valWidth = tempSize.get("width").asDouble();
+				double valHeight = tempSize.get("height").asDouble();
+				tempSize.set("width",valWidth*1.1 );
+				tempSize.set("height",valHeight*1.1 );
+				deviceSvg.refreshSize(tempSize);
+			}
+		});
+		zoomOutBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				JsonObject tempSize = deviceSvg.getSvgSize();
+				double valWidth = tempSize.get("width").asDouble();
+				double valHeight = tempSize.get("height").asDouble();
+				tempSize.set("width",valWidth*0.9 );
+				tempSize.set("height",valHeight*0.9 );
+				deviceSvg.refreshSize(tempSize);
 			}
 		});
 	}

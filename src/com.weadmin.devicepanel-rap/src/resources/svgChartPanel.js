@@ -21,6 +21,8 @@
       this.portHandleD3ElMap = []; //端口号的处理操作的图形，每个元素都是d3对象
       this.portTipTitleD3Map = {};
       this.selectedNodeId = '';
+      this.svgWidth = 0;
+      this.svgHeight = 0;
       this.blinkFlag = 0; //
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
@@ -40,11 +42,12 @@
 	    // element.style.width = "100%";
 	    // element.style.height = "100%";
 			element.style.overflow="auto";
-			element.style.backgroundColor ="#7f707f";
-      // element.style.transform = "scale(50%,50%) translate(-50%,-50%)";
+			// element.style.backgroundColor ="#7f707f";
 			$(element).addClass("svgContainer").html(this.svgTxt);
 			$(element).find("svg title").remove();
       this.svgJqObj = $(element).find("svg");
+      this.svgWidth = (this.svgJqObj.attr("width")).split("in")[0] *96; //unit 'in' to 'px' have to multiply by 100.
+      this.svgHeight = (this.svgJqObj.attr("height")).split("in")[0] *96;
       $(this.container).append( element );
       // console.log("this.svgTxt------>:",this.svgTxt);
       //重新格式一下svg的结构，获取网线端口元素数组。
@@ -80,9 +83,7 @@
     formatSvgXml:function(){
       // because the minimum font in visio is normal, but transform to svg and show in web ,the font-size will become big.
       // because minimum font-size in web browser is 10px.
-      this.svgJqObj.width(2 * this.svgJqObj.width());
-      this.svgJqObj.height(2 * this.svgJqObj.height());
-      this.svgJqObj.closest("div").css("transform","scale(0.5,0.5) translate(-50%,-50%)");
+      this.refreshSize(this.svgWidth, this.svgHeight);
 
       var v_cpEleArr = this.svgJqObj[0].getElementsByTagName("v:cp");
       for(var i=0;i<v_cpEleArr.length;i++){
@@ -207,7 +208,14 @@
     portBeSelected:function(eventName,nodeid){
       this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,nodeid]);
     },
-    refreshSize:function(){
+    getSize:function(){
+      return {width:+(this.svgWidth.toFixed(2)), height:+(this.svgHeight.toFixed(2))};
+    },
+    refreshSize:function(svgWidth,svgHeight){
+      this.svgWidth = +(svgWidth.toFixed(2));
+      this.svgHeight = +(svgHeight.toFixed(2));
+      this.svgJqObj.css({"width":2 * this.svgWidth,height:2 * this.svgHeight});
+      this.svgJqObj.closest("div").css("transform","scale(0.5,0.5) translate(-50%,-50%)");
     },
     getValueFromStr:function(str){
       var start = str.indexOf('(');

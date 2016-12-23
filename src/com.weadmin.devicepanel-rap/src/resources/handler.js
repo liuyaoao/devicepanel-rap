@@ -14,23 +14,23 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			return new svgdevicepanel.devicepanelsvgjs(properties);
 		},
 		destructor : "destroy",
-		methods: ["refreshAll"],
-		properties : ["spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
+		methods: ["refreshAll","refreshSize"],
+		properties : ["svgSize", "spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
 		events : ["Selection"]
 	});
 
 	svgdevicepanel.devicepanelsvgjs = function(properties) {
 		this._parent = rap.getObject(properties.parent);
-		bindAll(this, [ "resizeLayout", "onReady", "onSend", "onRender","refreshSize","portBeSelected"]);
+		bindAll(this, [ "resizeLayout", "onReady", "onSend", "onRender","refreshSize","portBeSelected","getSizeFromSvg"]);
 		this.element = document.createElement("div");
-		this.element.style.width = '100%';
-		this.element.style.height = '100%';
+		// this.element.style.width = '100%';
+		// this.element.style.height = '100%';
 		this._parent.append(this.element);
 		this._parent.addListener("Resize", this.resizeLayout);
 		this.ready = false;
 		this._svgTxt = "";
 		var area = this._parent.getClientArea();
-		this._size = {width:area[2]||300,height:area[3]||300};
+		this._svgSize = {width:area[2]||300,height:area[3]||300};
 
 		this._updatedata = true;
 		this._tooltipdesc = "";
@@ -69,7 +69,11 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					},
 					tooltipdesc:this._tooltipdesc
 				});
-				setTimeout(function(){ _this.refreshAll(); }, 100);
+				this.getSizeFromSvg();
+				setTimeout(function(){
+					_this.refreshAll();
+				}, 100);
+				rap.getRemoteObject( this ).set( "svgSize", JSON.stringify(this._svgSize));
 				rap.on("send", this.onSend);
 				this.ready = true;
 			}
@@ -108,8 +112,14 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		setTooltipdata : function (tooltipdata) {
 			this._tooltipdata = tooltipdata;
 		},
+		setSvgSize:function(svgSize){
+			this._svgSize = svgSize || "";
+		},
 		setSvgTxt:function(svgTxt){
 			this._svgTxt = svgTxt || "";
+		},
+		getSizeFromSvg:function(){
+			this._svgSize = this.svgChartPanel.getSize();
 		},
 		refreshAll:function(){ //更新所有显示。状态和提示。
 			console.log('refreshAll!!!!!!!!!!');
@@ -145,13 +155,13 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		resizeLayout : function() {
 			if (this.ready) {
 				var area = this._parent.getClientArea();
-				if(Math.abs(area[2]-this._size.width)<5 && Math.abs(area[3]-this._size.height)<5){ return; }
-				this.refreshSize(area[0],area[1],area[2],area[3]);
+				if(Math.abs(area[2]-this._svgSize.width)<5 && Math.abs(area[3]-this._svgSize.height)<5){ return; }
+				// this.refreshSize(area[0],area[1],area[2],area[3]);
 			}
 		},
-		refreshSize:function(left,top,width,height){
-			this._size = {width:width,height:height};
-			this.svgChartPanel.refreshSize(this._size);
+		refreshSize:function(obj){
+			this._svgSize = {width:obj.width,height:obj.height};
+			this.svgChartPanel.refreshSize(obj.width,obj.height);
 		}
 
 	};
