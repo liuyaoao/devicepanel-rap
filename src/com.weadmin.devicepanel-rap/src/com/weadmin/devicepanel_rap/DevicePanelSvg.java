@@ -146,6 +146,12 @@ public class DevicePanelSvg extends SVWidgetBase {
 	public JsonObject getSvgSize(){
 		return this.svgSize;
 	}
+	public double getWidth(){
+		return this.svgSize.get("width").asDouble();
+	}
+	public double getHeight(){
+		return this.svgSize.get("height").asDouble();
+	}
 	private static JsonArray jsonArray(int[] values) {
 		JsonArray array = new JsonArray();
 		for (int i = 0; i < values.length; i++) {
@@ -196,9 +202,9 @@ public class DevicePanelSvg extends SVWidgetBase {
         String sizeStr = sizeValue.asString();
 				JsonObject obj = JsonObject.readFrom(sizeStr);
 				this.svgSize = obj;
-				System.out.println("svgSize:"+sizeStr);
-				System.out.println("svgSize obj.width:"+obj.get("width"));
-				System.out.println("svgSize obj.height:"+obj.get("height"));
+				// System.out.println("svgSize:"+sizeStr);
+				// System.out.println("svgSize obj.width:"+obj.get("width"));
+				// System.out.println("svgSize obj.height:"+obj.get("height"));
       }
 	}
 

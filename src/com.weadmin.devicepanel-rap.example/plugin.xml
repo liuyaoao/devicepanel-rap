@@ -9,5 +9,13 @@
             path="/hello">
       </entrypoint>
    </extension>
+   <extension
+         point="org.eclipse.rap.ui.entrypoint">
+      <entrypoint
+            class="com.weadmin.devicepanel_rap.example.ExampleTwo"
+            id="com.weadmin.devicepanel-rap.example.entrypoint2"
+            path="/hello2">
+      </entrypoint>
+   </extension>
 
 </plugin>

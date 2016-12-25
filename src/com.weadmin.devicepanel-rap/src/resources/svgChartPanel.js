@@ -39,8 +39,6 @@
 	    element.style.position = "absolute";
 	    element.style.left = "0";
 	    element.style.top = "0";
-	    // element.style.width = "100%";
-	    // element.style.height = "100%";
 			element.style.overflow="auto";
 			// element.style.backgroundColor ="#7f707f";
 			$(element).addClass("svgContainer").html(this.svgTxt);
@@ -61,9 +59,10 @@
       for(var key in this.portHandleD3ElMap){
         var portRect = this.portHandleD3ElMap[key];
         portRect.on("contextmenu", function(){ //响应鼠标右键事件
-          var position = $(this).position();
+          var pos = $(this).position();
+          var svgPos = $(this).closest("svg").position();
     			_this.selectedNodeId = d3.select(this).attr("data-nodeid");
-    			_this.menuPanel.showMenuPanel(position,_this.selectedNodeId);
+    			_this.menuPanel.showMenuPanel({left:pos.left-svgPos.left, top:pos.top-svgPos.top},_this.selectedNodeId);
     			d3.event.preventDefault();
         });
   			portRect.on("click", function (d, index) {
