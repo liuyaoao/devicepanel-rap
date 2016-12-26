@@ -11,9 +11,9 @@
       this.container = options.container;
       this.menuPanel = options.menuPanel;
       this.svgTxt = options.svgTxt || '';
-      this.tooltipdesc = options.tooltipdesc;
       this.portBeSelectedCall = options.portBeSelectedCall;
       this.statusArr = options.statusArr || [];
+      this.tooltipDataArr = options.tooltipDataArr || [];
       this.svgContainer = null;
       this.svgJqObj = null; //svg的jquery对象
       this.portJqEleMap = {}; //端口号的jquery对象map
@@ -28,8 +28,6 @@
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
       // 默认：黑色， 0：深灰色， 1：深绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
       this.statusColorMap = {"":"#080808", 0:"#464141", 1:"#006400", 2:"#FFFF00", 3:"#FF0000", 4:"#0000FF", 5:"#FFA500"};
-      // this.xStart = options.xStart;
-      // this.yStart = options.yStart;
       this.blinkLightMap = {}; //哪些指示灯需求闪烁。
       this.initElement();
       this.addEvent();
@@ -119,20 +117,10 @@
     },
     createToolTip:function(){
       for(var key in this.portHandleD3ElMap){
-        var ttitel = this.portHandleD3ElMap[key].append("svg:title");
-        var indexid = 1;
-  			var text2 = this.tooltipdesc;
-  			var text3 = text2.replace('p1', '-')
-  				.replace('p2', indexid)
-  				.replace('p3', '-')
-  				.replace('p4', '-')
-  				.replace('p5', '-')
-  				.replace('p6', '-')
-  				.replace('p7', "-")
-  				.replace('p8', "-")
-  				.replace('p9', "-");
-  			ttitel.text(text3);
-        this.portTipTitleD3Map[key] = ttitel;
+        var titleTip = this.portHandleD3ElMap[key].append("svg:title");
+        var tooltipStr = this.tooltipDataArr[+key-1] || "端口信息";
+  			titleTip.text(tooltipStr.replace(/<br>/g,'\n'));
+        this.portTipTitleD3Map[key] = titleTip;
       }
     },
     createIntervalTimer:function(){
@@ -174,35 +162,15 @@
         portLightEl && portLightEl.find('path').css('fill',colorValue);
       }
 		},
-    updateTooltip:function(tooltipData){
-      this.tooltipData = tooltipData;
+    // 更新端口的鼠标悬停提示面板
+    updateTooltip:function(tooltipDataArr){
+      this.tooltipDataArr = tooltipDataArr;
       var that = this;
       for(var key in this.portTipTitleD3Map){
         var d3Title = this.portTipTitleD3Map[key];
-        //TODO
+        var tooltipStr = this.tooltipDataArr[+key-1] || "";
+        d3Title.text(tooltipStr.replace(/<br>/g,'\n'));
       }
-			tooltipData.map(function (value, index) {
-				var nindex = index + 1;
-				var nid = "#c" + nindex;
-				// var selection1 = d3.select(nid);
-				// selection1.text("");
-				// var text2 = that.getTooltipdesc();
-				// if (value != null) {
-				// 	var values = value.split(":");
-				// 	if (values.length > 0) {
-				// 		var text3 = text2.replace('p1', values[0])
-				// 			.replace('p2', values[1])
-				// 			.replace('p3', values[2])
-				// 			.replace('p4', values[3])
-				// 			.replace('p5', values[4])
-				// 			.replace('p6', values[5])
-				// 			.replace('p7', values[6])
-				// 			.replace('p8', values[7])
-				// 			.replace('p9', values[8]);
-				// 		selection1.append("svg:title").text(text3);
-				// 	}
-				// }
-			});
     },
     portBeSelected:function(eventName,nodeid){
       this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,nodeid]);

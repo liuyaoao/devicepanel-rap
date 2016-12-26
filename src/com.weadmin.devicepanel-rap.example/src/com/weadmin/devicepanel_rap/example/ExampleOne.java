@@ -43,10 +43,10 @@ public class ExampleOne extends AbstractEntryPoint{
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysObjId = "svg05"; //svg file name.
+		String sysObjId = "svg02"; //svg file name.
 		deviceSvg.setStatuss(createStatusArr(50));
 		deviceSvg.setTooltipdata(createTooltipArr(50));
-		deviceSvg.addOneSvgPanel(sysObjId);
+		deviceSvg.addOneSvgPanelById(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -88,14 +88,14 @@ public class ExampleOne extends AbstractEntryPoint{
 	private int[] createStatusArr(int num){
 		int[] statusArr = new int[num];
 		for(int i=0;i<num;i++){
-			statusArr[i] = getRangeRandomNum(0,4);
+			statusArr[i] = getRangeRandomNum(0,5);
 		}
 		return statusArr;
 	}
 	private String[] createTooltipArr(int num){
 		String[] tooltipArr = new String[num];
 		for(int i=0;i<num;i++){
-			tooltipArr[i] = getRangeRandomNum(0,4)+"";
+			tooltipArr[i] = "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9";
 		}
 		return tooltipArr;
 	}

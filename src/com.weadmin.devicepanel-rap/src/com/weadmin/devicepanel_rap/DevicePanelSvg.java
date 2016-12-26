@@ -36,18 +36,16 @@ public class DevicePanelSvg extends SVWidgetBase {
 	 private String svgTxt = "";
 	 private JsonObject svgSize = null;
 	 private int[] statuss;
-	 private String tooltipdesc;
 	 private String menudesc;
 	 private String[] tooltipdata;
 
 	public DevicePanelSvg(Composite parent, int style) {
 		super(parent,style);
-		this.setTooltipdesc("端口信息\n端口类型：p1\n端口索引：p2\n端口描述：p3\n接口索引：p4\n端口状态：p5\n管理状态：p6\n接收流量：p7\n发送流量：p8\n速率   ：p9");
+		// this.setTooltipdesc("端口信息\n端口类型：p1\n端口索引：p2\n端口描述：p3\n接口索引：p4\n端口状态：p5\n管理状态：p6\n接收流量：p7\n发送流量：p8\n速率   ：p9");
 		this.setMenudesc("打开端口:关闭端口:当前端口连接设备");
-
 	}
 
-	public void addOneSvgPanel(String sysObjId){
+	public void addOneSvgPanelById(String sysObjId){
 		this.sysObjId = sysObjId;
 		ClassLoader classLoader = SVWidgetBase.class.getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("resources/" + "svgs/"+sysObjId+".svg");
@@ -65,15 +63,16 @@ public class DevicePanelSvg extends SVWidgetBase {
     	throw new IllegalArgumentException("Failed to load resources", ioe);
     }
     try{
-//		svgTxt = URLDecoder.decode(svgTxt, "UTF-8");
     	svgTxt = new String(bt,"UTF-8");
     }catch(UnsupportedEncodingException e){
     	throw new IllegalArgumentException("Failed to load resources", e);
     }
-		int index = svgTxt.indexOf("<svg");
-		svgTxt = svgTxt.substring(index);
 		setSvgTxt(svgTxt);
 	}
+  // add svg chart by svg xml string.
+  public void addOneSvgPanelBySvgTxt(String svgtxt){
+    setSvgTxt(svgTxt);
+  }
 	public void refreshAll(int[] statuss, String[] tooltipdata) {
 		setStatuss(statuss);
 		setTooltipdata(tooltipdata);
@@ -121,27 +120,17 @@ public class DevicePanelSvg extends SVWidgetBase {
 			remoteObject.set("statuss", jsonArray(statuss));
 		}
 	}
-	public String getTooltipdesc() {
-		checkWidget();
-		return tooltipdesc;
-	}
-
-	public void setTooltipdesc(String tooltipdesc) {
-		checkWidget();
-		if(this.tooltipdesc!=tooltipdesc){
-			this.tooltipdesc = tooltipdesc;
-			remoteObject.set( "tooltipdesc", tooltipdesc );
-		}
-	}
 	/* 获取svg文件内容文本字符串*/
 	public String getSvgTxt() {
 		checkWidget();
 		return svgTxt;
 	}
-	public void setSvgTxt(String svgTxt) {
+	public void setSvgTxt(String svgtxt) {
 		checkWidget();
-		this.svgTxt = svgTxt;
-		remoteObject.set( "svgTxt", svgTxt );
+    int index = svgtxt.indexOf("<svg");
+		svgtxt = svgtxt.substring(index);
+		this.svgTxt = svgtxt;
+		remoteObject.set( "svgTxt", svgtxt );
 	}
 	public JsonObject getSvgSize(){
 		return this.svgSize;

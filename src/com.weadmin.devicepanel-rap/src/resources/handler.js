@@ -15,7 +15,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		destructor : "destroy",
 		methods: ["refreshAll","refreshSize"],
-		properties : ["svgSize", "spacing", "statuss", "tooltipdesc", "menudesc", "tooltipdata","svgTxt"],
+		properties : ["svgSize", "spacing", "statuss", "menudesc", "tooltipdata","svgTxt"],
 		events : ["Selection"]
 	});
 
@@ -38,7 +38,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		this._updatedata = true;
 		this._tooltipdesc = "";
 		this._menudesc = "";
-		this._tooltipdata = [];
+		this._tooltipDataArr = [];
 		this._selectnodeid = "";
 		this._statuss = []; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
 		rap.on("render", this.onRender);
@@ -62,10 +62,10 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					menuPanel:this.menuPanel,
 					svgTxt:this._svgTxt,
 					statusArr:this._statuss,
+					tooltipDataArr:this._tooltipDataArr,
 					portBeSelectedCall:function(eventName,svid){
 						_this.portBeSelected(eventName,svid);
-					},
-					tooltipdesc:this._tooltipdesc
+					}
 				});
 				this.getSizeFromSvg();
 				setTimeout(function(){
@@ -91,12 +91,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this._selectnodeid = selectedNodeId;
 			this.portBeSelected(eventName, selectedNodeId);
 		},
-		setTooltipdesc : function (tooltipdesc) {
-			this._tooltipdesc = tooltipdesc;
-		},
-		getTooltipdesc : function () {
-			return this._tooltipdesc;
-		},
 		setMenudesc : function (menudesc) {
 			this._menudesc = menudesc;
 		},
@@ -108,7 +102,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this._statuss = statuss;
 		},
 		setTooltipdata : function (tooltipdata) {
-			this._tooltipdata = tooltipdata;
+			this._tooltipDataArr = tooltipdata;
 		},
 		setSvgSize:function(svgSize){
 			this._svgSize = svgSize || "";
@@ -122,7 +116,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		refreshAll:function(){ //更新所有显示。状态和提示。
 			console.log('refreshAll!!!!!!!!!!');
 			this.svgChartPanel.updateStatus(this._statuss);
-			this.svgChartPanel.updateTooltip(this._tooltipdata);
+			this.svgChartPanel.updateTooltip(this._tooltipDataArr);
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid
 		portBeSelected : function (eventName, svid) {
@@ -153,6 +147,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		resizeLayout : function() {
 			if (this.ready) {
 				var area = this._parent.getClientArea();
+				console.log("resizeLayout:",area);
 				if(Math.abs(area[2]-this._svgSize.width)<5 && Math.abs(area[3]-this._svgSize.height)<5){ return; }
 				// this.refreshSize(area[0],area[1],area[2],area[3]);
 			}

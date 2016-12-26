@@ -58,3 +58,6 @@ color:#000;
 background:#dfc184;
 color:#000;
 }
+.svgContainer{
+  -webkit-text-size-adjust:none;
+}

@@ -23,7 +23,7 @@ public class DevicePanel extends Dialog {
 	private int height = 700;
 	private Shell shell = null;
 	String nodeid = "";
-	String sysObjId = "svg05"; //svg file name.
+	String sysObjId = "svg01"; //svg file name.
 
 	int[] statuss = null;
 	String[] tooltips = null;
@@ -69,10 +69,10 @@ public class DevicePanel extends Dialog {
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 		deviceSvg.setStatuss(createStatusArr(50));
 		deviceSvg.setTooltipdata(createTooltipArr(50));
-		deviceSvg.addOneSvgPanel(sysObjId);
+		deviceSvg.addOneSvgPanelById(sysObjId);
 
 		deviceSvg.setLayoutData(new GridData(GridData.CENTER));
-		
+//		shell.addControlListener(listener);
 		parent.getDisplay().timerExec(1000, new Runnable() {
 			public void run() {
 				width = (int)(deviceSvg.getWidth());
@@ -117,14 +117,14 @@ public class DevicePanel extends Dialog {
 	private int[] createStatusArr(int num){
 		int[] statusArr = new int[num];
 		for(int i=0;i<num;i++){
-			statusArr[i] = getRangeRandomNum(0,4);
+			statusArr[i] = getRangeRandomNum(0,5);
 		}
 		return statusArr;
 	}
 	private String[] createTooltipArr(int num){
 		String[] tooltipArr = new String[num];
 		for(int i=0;i<num;i++){
-			tooltipArr[i] = getRangeRandomNum(0,4)+"";
+			tooltipArr[i] = "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9";
 		}
 		return tooltipArr;
 	}
