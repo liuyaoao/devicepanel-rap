@@ -13,6 +13,8 @@
       this.clickMenuCall = options.clickMenuCall;
       this.eventNameMap = {"":"openport", "0":"openport", "1":"closeport", "2":"deviceip"};
       this.selectedNodeId = 0;
+      this.menuWidth = 0;
+      this.menuHeight = 0;
       this.isMouseIn = false;
       this.initElement();
       this.addEvent();
@@ -28,6 +30,8 @@
 			for (var i = 0; i < arraymenu.length; i++) {
 				var lia = ulul.append("li").append("a").style("cursor", "pointer").text(arraymenu[i]);
 			}
+      this.menuWidth = $(ele).width();
+      this.menuHeight = $(ele).height();
     },
     addEvent:function(){
       var _this = this;
@@ -56,6 +60,12 @@
       if(!this.isMouseIn){
         d3.select('#menuPanel').style('display', 'none');
       }
+    },
+    getWidth:function(){
+      return this.menuWidth;
+    },
+    getHeight:function(){
+      return this.menuHeight;
     }
 
   };

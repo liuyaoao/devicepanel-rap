@@ -61,9 +61,18 @@
         var portRect = this.portHandleD3ElMap[key];
         portRect.on("contextmenu", function(){ //响应鼠标右键事件
           var pos = $(this).position();
+          var menuWidth = _this.menuPanel.getWidth();
+          var menuHeight = _this.menuPanel.getHeight();
           var svgPos = $(this).closest("svg").position();
     			_this.selectedNodeId = d3.select(this).attr("data-nodeid");
-    			_this.menuPanel.showMenuPanel({left:pos.left-svgPos.left, top:pos.top-svgPos.top},_this.selectedNodeId);
+          var destPos = {left:pos.left-svgPos.left,top:pos.top-svgPos.top};
+          if(destPos.left+menuWidth+20>_this.svgWidth){
+            destPos.left = _this.svgWidth-menuWidth-20;
+          }
+          if(destPos.top+menuHeight>_this.svgHeight){
+            destPos.top = _this.svgHeight-menuHeight;
+          }
+    			_this.menuPanel.showMenuPanel(destPos,_this.selectedNodeId);
     			d3.event.preventDefault();
         });
   			portRect.on("click", function (d, index) {

@@ -209,6 +209,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 			event.text = parameters.get("index").asString();
 			event.data =  parameters.get("data");
 			notifyListeners(SWT.Selection, event);
+//			notifyListeners(SWT.INI, event);
 		}
 	}
 

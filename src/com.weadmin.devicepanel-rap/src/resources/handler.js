@@ -21,7 +21,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 
 	svgdevicepanel.devicepanelsvgjs = function(properties) {
 		this._parent = rap.getObject(properties.parent);
-		bindAll(this, [ "resizeLayout", "onSend", "onRender","refreshSize","portBeSelected","getSizeFromSvg"]);
+		bindAll(this, [ "resizeLayout", "onSend", "onRender","refreshSize","portBeSelected","getSizeFromSvg","svgInitializedCall"]);
 		this.element = document.createElement("div");
 		this.element.style.position = 'absolute';
 		this.element.style.top = '0';
@@ -68,6 +68,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					}
 				});
 				this.getSizeFromSvg();
+				this.svgInitializedCall();
+				// console.log("this._svgSize:----",this._svgSize);
 				setTimeout(function(){
 					_this.refreshAll();
 				}, 100);
@@ -98,7 +100,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			return this._menudesc;
 		},
 		setStatuss : function (statuss) {
-			console.log('statusArr:',statuss);
+			// console.log('statusArr:',statuss);
 			this._statuss = statuss;
 		},
 		setTooltipdata : function (tooltipdata) {
@@ -143,11 +145,18 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				"data" : svid
 			});
 		},
+		svgInitializedCall:function(){
+			var remoteObject = rap.getRemoteObject(this);
+			remoteObject.notify("Selection", {
+				"index" : "svg_initialized",
+				"data" : -1
+			});
+		},
 		// 大小自适应
 		resizeLayout : function() {
 			if (this.ready) {
 				var area = this._parent.getClientArea();
-				console.log("resizeLayout:",area);
+				// console.log("resizeLayout:",area);
 				if(Math.abs(area[2]-this._svgSize.width)<5 && Math.abs(area[3]-this._svgSize.height)<5){ return; }
 				// this.refreshSize(area[0],area[1],area[2],area[3]);
 			}

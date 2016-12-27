@@ -51,7 +51,7 @@ public class DevicePanel extends Dialog {
 		super(parentShell);
 		this.sysObjId = sysObjId;
 		setShellStyle(SWT.MAX | SWT.RESIZE);
-		
+
 	}
 
 	protected void configureShell(Shell newShell) {
@@ -61,7 +61,7 @@ public class DevicePanel extends Dialog {
 		super.configureShell(newShell);
 		shell = newShell;
 	}
-	
+
 	public void zommIn(){
 		JsonObject tempSize = deviceSvg.getSvgSize();
 		double valWidth = tempSize.get("width").asDouble();
@@ -72,7 +72,7 @@ public class DevicePanel extends Dialog {
 		deviceSvg.setLayoutData(new GridData((int)(valWidth*1.1), (int)(valHeight*1.1)));
 		shell.pack();
 	}
-	
+
 	public void zommOut(){
 		JsonObject tempSize = deviceSvg.getSvgSize();
 		double valWidth = tempSize.get("width").asDouble();
@@ -83,7 +83,7 @@ public class DevicePanel extends Dialog {
 		deviceSvg.setLayoutData(new GridData((int)(valWidth*0.9), (int)(valHeight*0.9)));
 		shell.pack();
 	}
-	
+
 	/**
 	 * Create contents of the dialog.
 	 * @param parent
@@ -117,13 +117,15 @@ public class DevicePanel extends Dialog {
 //					MsgBox.ShowError("查看端口连接的设备！");
 				}else if(eventag.toLowerCase().equals("portport")){
 //					MsgBox.ShowError("点击了端口！");
+				}else if(eventag.toLowerCase().equals("svg_initialized")){
+					System.out.println("svg_initialized");
 				}
 			}
 		});
 		parent.getDisplay().timerExec(1000, new Runnable() {
 			public void run() {
 				parent.addControlListener(new ControlListener() {
-					
+
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void controlResized(ControlEvent e) {
@@ -133,8 +135,8 @@ public class DevicePanel extends Dialog {
 						JsonObject tempSize = deviceSvg.getSvgSize();
 						double svgx = deviceSvg.getWidth();
 						double svgy = deviceSvg.getHeight();
-						if(((int)shellx>(int)svgx&&(int)shelly==(int)svgy) || 
-								((int)shelly>=(int)svgy&&(int)shellx==(int)svgx) || 
+						if(((int)shellx>(int)svgx&&(int)shelly==(int)svgy) ||
+								((int)shelly>=(int)svgy&&(int)shellx==(int)svgx) ||
 								((int)shellx>(int)svgx&&(int)shelly>=(int)svgy)){
 							double xx = shellx/svgx;
 							double yy = shelly/svgy;
@@ -144,8 +146,8 @@ public class DevicePanel extends Dialog {
 							deviceSvg.refreshSize(tempSize);
 							deviceSvg.setLayoutData(new GridData((int)(svgx*value), (int)(svgy*value)));
 							shell.pack();
-						}else if(((int)shellx<(int)svgx&&(int)shelly==(int)svgy) || 
-								((int)shelly<(int)svgy&&(int)shellx==(int)svgx) || 
+						}else if(((int)shellx<(int)svgx&&(int)shelly==(int)svgy) ||
+								((int)shelly<(int)svgy&&(int)shellx==(int)svgx) ||
 								((int)shelly<(int)svgy&&(int)shellx<(int)svgx)){
 							double xx = shellx/svgx;
 							double yy = shelly/svgy;
