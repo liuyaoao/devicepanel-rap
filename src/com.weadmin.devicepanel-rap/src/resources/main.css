@@ -1,7 +1,7 @@
 .menu {
 font-family: arial, sans-serif;
 margin:0;
-z-index: 9999;
+z-index: 999999;
 position:absolute;
 }
 /* remove the bullets and set the margin and padding to zero for the unordered list */

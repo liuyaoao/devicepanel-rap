@@ -26,9 +26,12 @@
       this.blinkFlag = 0; //
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
-      // 默认：黑色， 0：深灰色， 1：深绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
-      this.statusColorMap = {"":"#080808", 0:"#464141", 1:"#006400", 2:"#FFFF00", 3:"#FF0000", 4:"#0000FF", 5:"#FFA500"};
-      this.blinkLightMap = {}; //哪些指示灯需求闪烁。
+      this.noNeedBlinkStatusArr = [0,4,5];
+      // 默认：黑色， 0：深灰色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
+      this.statusColorMap = {"":"#080808", 0:"#080808", 1:"#19E807", 2:"#FFF20B", 3:"#FF1411", 4:"#2813E8", 5:"#FF6600"};
+      this.strokeColorMap = {"":"#8819E8", 0:"#FF1411", 1:"#FF11FF", 2:"#9011FF", 3:"#3B12E8", 4:"#FF5C08", 5:"#00FFDC"};
+
+      this.blinkLightMap = {}; //哪些指示灯需要闪烁。
       this.initElement();
       this.addEvent();
     },
@@ -67,10 +70,10 @@
   				_this.portBeSelected("portport" , d3.select(this).attr('data-nodeid'));
   			});
         portRect.on("mouseover", function () {
-  				d3.select(this).attr("fill-opacity", "1");
+  				d3.select(this).attr("stroke-width", "1");
   			});
   			portRect.on("mouseout", function () {
-  				d3.select(this).attr("fill-opacity", "0");
+  				d3.select(this).attr("stroke-width", "0");
           setTimeout(function(){ //this is necessary
             _this.menuPanel.hideMenuPanel();
           },50);
@@ -111,8 +114,10 @@
         el.after(cloneEl);
         this.portHandleD3ElMap[key] = d3.select(cloneEl[0]);
         this.portHandleD3ElMap[key].attr("data-nodeid", key)
-        .attr("fill", "blue")
-  			.attr("fill-opacity", "0");
+        .attr("fill", "#FFF")
+        .attr("fill-opacity", "0")
+        .attr("stroke", "#fff")
+  			.attr("stroke-width", "0");
       }
     },
     createToolTip:function(){
@@ -139,14 +144,19 @@
     startIndicatorLightBlink:function(){
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
-        var colorValue = this.statusColorMap[this.statusArr[+key] ||""];
+        var colorValue = this.statusColorMap[this.statusArr[+key-1] ||""];
         g_el.find("path").css("fill",colorValue);
       }
     },
     stopIndicatorLightBlink:function(){
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
-        g_el.find("path").css("fill","black");
+        var statusVal = this.statusArr[+key-1];
+        if(this.noNeedBlinkStatusArr.indexOf(statusVal) != -1){
+          g_el.find("path").css("fill",this.statusColorMap[statusVal]);
+        }else{
+          g_el.find("path").css("fill","black");
+        }
       }
     },
     // 更新端口状态
@@ -161,15 +171,16 @@
         portEl && portEl.find('path').css('fill',colorValue);
         portLightEl && portLightEl.find('path').css('fill',colorValue);
       }
+      this.updatePortHandleStrokeColor();
 		},
     // 更新端口的鼠标悬停提示面板
     updateTooltip:function(tooltipDataArr){
       this.tooltipDataArr = tooltipDataArr;
-      var that = this;
-      for(var key in this.portTipTitleD3Map){
+      for(var i=0;i<tooltipDataArr.length;i++){
+        var key = i + 1;
+        var tooltipStr = tooltipDataArr[i] || '';
         var d3Title = this.portTipTitleD3Map[key];
-        var tooltipStr = this.tooltipDataArr[+key-1] || "";
-        d3Title.text(tooltipStr.replace(/<br>/g,'\n'));
+        d3Title && d3Title.text(tooltipStr.replace(/<br>/g,'\n'));
       }
     },
     portBeSelected:function(eventName,nodeid){
@@ -183,6 +194,11 @@
       this.svgHeight = +(svgHeight.toFixed(2));
       this.svgJqObj.css({"width":2 * this.svgWidth,height:2 * this.svgHeight});
       this.svgJqObj.closest("div").css("transform","scale(0.5,0.5) translate(-50%,-50%)");
+    },
+    updatePortHandleStrokeColor:function(){
+      for(var key in this.portHandleD3ElMap){
+        this.portHandleD3ElMap[key].attr("stroke",this.strokeColorMap[this.statusArr[+key-1]]);
+      }
     },
     getValueFromStr:function(str){
       var start = str.indexOf('(');
