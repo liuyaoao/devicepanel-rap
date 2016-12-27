@@ -1,13 +1,14 @@
 package com.weadmin.devicepanel_rap.example;
 
 import java.util.Random;
-
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.rap.json.JsonObject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -19,16 +20,16 @@ import com.weadmin.devicepanel_rap.DevicePanelSvg;
 
 public class DevicePanel extends Dialog {
 
+	private static final long serialVersionUID = 1L;
 	private int width = 600;
 	private int height = 700;
 	private Shell shell = null;
 	String nodeid = "";
 	String sysObjId = "svg01"; //svg file name.
+	DevicePanelSvg deviceSvg;
 
 	int[] statuss = null;
 	String[] tooltips = null;
-	private String portkey="";
-	private String commm ="public";
 	int rowCount=0;
 	int models = 0;
 	int svhide = 0;
@@ -46,10 +47,11 @@ public class DevicePanel extends Dialog {
 
 	}
 
-	public DevicePanel(Shell parentShell) {
+	public DevicePanel(Shell parentShell,String sysObjId) {
 		super(parentShell);
+		this.sysObjId = sysObjId;
 		setShellStyle(SWT.MAX | SWT.RESIZE);
-
+		
 	}
 
 	protected void configureShell(Shell newShell) {
@@ -59,28 +61,49 @@ public class DevicePanel extends Dialog {
 		super.configureShell(newShell);
 		shell = newShell;
 	}
+	
+	public void zommIn(){
+		JsonObject tempSize = deviceSvg.getSvgSize();
+		double valWidth = tempSize.get("width").asDouble();
+		double valHeight = tempSize.get("height").asDouble();
+		tempSize.set("width",(valWidth*1.1));
+		tempSize.set("height",(valHeight*1.1));
+		deviceSvg.refreshSize(tempSize);
+		deviceSvg.setLayoutData(new GridData((int)(valWidth*1.1), (int)(valHeight*1.1)));
+		shell.pack();
+	}
+	
+	public void zommOut(){
+		JsonObject tempSize = deviceSvg.getSvgSize();
+		double valWidth = tempSize.get("width").asDouble();
+		double valHeight = tempSize.get("height").asDouble();
+		tempSize.set("width",(valWidth*0.9));
+		tempSize.set("height",(valHeight*0.9));
+		deviceSvg.refreshSize(tempSize);
+		deviceSvg.setLayoutData(new GridData((int)(valWidth*0.9), (int)(valHeight*0.9)));
+		shell.pack();
+	}
+	
 	/**
 	 * Create contents of the dialog.
 	 * @param parent
 	 */
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		parent.setLayout(new GridLayout(1, false));
-		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(0, 0, 0, -30).spacing(0, 0).applyTo(parent);
+		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
+		deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 		deviceSvg.setStatuss(createStatusArr(50));
 		deviceSvg.setTooltipdata(createTooltipArr(50));
 		deviceSvg.addOneSvgPanelById(sysObjId);
 
-		deviceSvg.setLayoutData(new GridData(GridData.CENTER));
-//		shell.addControlListener(listener);
 		parent.getDisplay().timerExec(1000, new Runnable() {
 			public void run() {
 				width = (int)(deviceSvg.getWidth());
 				height = (int)(deviceSvg.getHeight());
-				deviceSvg.setLayoutData(new GridData(width+10, height+50));
-				System.out.println("width:"+width);
-				System.out.println("height:"+height);
-				shell.setSize(new Point(width+10,height+50));
+				deviceSvg.setLayoutData(new GridData(width, height));
+				System.out.println("width:"+width + "--" +"height:"+height);
+				shell.pack();
 			}
 		});
 		deviceSvg.addListener(SWT.Selection, new Listener() {
@@ -96,8 +119,51 @@ public class DevicePanel extends Dialog {
 //					MsgBox.ShowError("点击了端口！");
 				}
 			}
-	});
-	return deviceSvg;
+		});
+		parent.getDisplay().timerExec(1000, new Runnable() {
+			public void run() {
+				parent.addControlListener(new ControlListener() {
+					
+					private static final long serialVersionUID = 1L;
+					@Override
+					public void controlResized(ControlEvent e) {
+						Point size = parent.getSize();
+						double shellx = size.x;
+						double shelly = size.y;
+						JsonObject tempSize = deviceSvg.getSvgSize();
+						double svgx = deviceSvg.getWidth();
+						double svgy = deviceSvg.getHeight();
+						if(((int)shellx>(int)svgx&&(int)shelly==(int)svgy) || 
+								((int)shelly>=(int)svgy&&(int)shellx==(int)svgx) || 
+								((int)shellx>(int)svgx&&(int)shelly>=(int)svgy)){
+							double xx = shellx/svgx;
+							double yy = shelly/svgy;
+							double value = Math.max(xx, yy);
+							tempSize.set("width",(svgx*value) );
+							tempSize.set("height",(svgy*value));
+							deviceSvg.refreshSize(tempSize);
+							deviceSvg.setLayoutData(new GridData((int)(svgx*value), (int)(svgy*value)));
+							shell.pack();
+						}else if(((int)shellx<(int)svgx&&(int)shelly==(int)svgy) || 
+								((int)shelly<(int)svgy&&(int)shellx==(int)svgx) || 
+								((int)shelly<(int)svgy&&(int)shellx<(int)svgx)){
+							double xx = shellx/svgx;
+							double yy = shelly/svgy;
+							double value = Math.min(xx, yy);
+							tempSize.set("width",(svgx*value) );
+							tempSize.set("height",(svgy*value));
+							deviceSvg.refreshSize(tempSize);
+							deviceSvg.setLayoutData(new GridData((int)(svgx*value), (int)(svgy*value)));
+							shell.pack();
+						}
+					}
+					@Override
+					public void controlMoved(ControlEvent e) {
+					}
+				});
+			}
+		});
+		return deviceSvg;
 }
 	/**
 	 * Create contents of the button bar.
