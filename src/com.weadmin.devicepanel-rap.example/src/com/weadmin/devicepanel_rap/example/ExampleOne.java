@@ -48,6 +48,15 @@ public class ExampleOne extends AbstractEntryPoint{
 		deviceSvg.setTooltipdata(createTooltipArr(50));
 		deviceSvg.addOneSvgPanelById(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
+		//add number 2 svg panel
+		DevicePanelSvg deviceSvg2 = new DevicePanelSvg(parent, SWT.NONE);
+		String sysObjId2 = "svg02"; //svg file name.
+		deviceSvg2.setStatuss(createStatusArr(50));
+		deviceSvg2.setTooltipdata(createTooltipArr(50));
+		deviceSvg2.addOneSvgPanelById(sysObjId2);
+		deviceSvg2.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

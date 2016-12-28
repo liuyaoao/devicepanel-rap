@@ -45,10 +45,10 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.setMenudesc("打开端口:关闭端口:当前端口连接设备");
 	}
 
-	public void addOneSvgPanelById(String sysObjId){
-		this.sysObjId = sysObjId;
+	public void addOneSvgPanelById(String sysobjid){
+		setSysObjId(sysobjid);
 		ClassLoader classLoader = SVWidgetBase.class.getClassLoader();
-		InputStream inputStream = classLoader.getResourceAsStream("resources/" + "svgs/"+sysObjId+".svg");
+		InputStream inputStream = classLoader.getResourceAsStream("resources/" + "svgs/"+sysobjid+".svg");
 		byte bt[] = new byte[5242880]; //最大可放5M大小字节
     int len = 0;
     int temp=0;          //所有读取的内容都使用temp接收
@@ -71,7 +71,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 	}
   // add svg chart by svg xml string.
   public void addOneSvgPanelBySvgTxt(String svgtxt){
-    setSvgTxt(svgTxt);
+    setSvgTxt(svgtxt);
   }
 	public void refreshAll(int[] statuss, String[] tooltipdata) {
 		setStatuss(statuss);
@@ -82,7 +82,14 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.svgSize = size;
 		super.callRemoteMethod("refreshSize",this.svgSize);
 	}
-
+	public String getSysObjId(){
+		checkWidget();
+		return sysObjId;
+	}
+	public void setSysObjId(String objid){
+		checkWidget();
+		sysObjId = objid;
+	}
 	public String getMenudesc() {
 		checkWidget();
 		return menudesc;

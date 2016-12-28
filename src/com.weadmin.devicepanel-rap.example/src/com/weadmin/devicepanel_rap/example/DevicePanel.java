@@ -21,8 +21,8 @@ import com.weadmin.devicepanel_rap.DevicePanelSvg;
 public class DevicePanel extends Dialog {
 
 	private static final long serialVersionUID = 1L;
-	private int width = 600;
-	private int height = 700;
+	private int width = 400;
+	private int height = 300;
 	private Shell shell = null;
 	String nodeid = "";
 	String sysObjId = "svg01"; //svg file name.
@@ -97,7 +97,7 @@ public class DevicePanel extends Dialog {
 		deviceSvg.setTooltipdata(createTooltipArr(50));
 		deviceSvg.addOneSvgPanelById(sysObjId);
 
-		parent.getDisplay().timerExec(1000, new Runnable() {
+		parent.getDisplay().timerExec(100, new Runnable() {
 			public void run() {
 				width = (int)(deviceSvg.getWidth());
 				height = (int)(deviceSvg.getHeight());

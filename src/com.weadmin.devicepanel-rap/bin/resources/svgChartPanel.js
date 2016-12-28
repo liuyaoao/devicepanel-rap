@@ -10,6 +10,7 @@
     init:function(options){
       this.container = options.container;
       this.menuPanel = options.menuPanel;
+      this.uniqueId = options.uniqueId;
       this.svgTxt = options.svgTxt || '';
       this.portBeSelectedCall = options.portBeSelectedCall;
       this.statusArr = options.statusArr || [];
@@ -215,6 +216,7 @@
       return str.substring(start+1,end);
     },
     dispose:function(){
+      $(this.svgContainer).off().remove();
       clearInterval(this.intervalTimer);
     }
 
