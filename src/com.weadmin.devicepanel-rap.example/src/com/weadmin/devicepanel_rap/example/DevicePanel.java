@@ -25,7 +25,7 @@ public class DevicePanel extends Dialog {
 	private int height = 300;
 	private Shell shell = null;
 	String nodeid = "";
-	String sysObjId = "svg01"; //svg file name.
+	String sysObjId = "svg06"; //svg file name.
 	DevicePanelSvg deviceSvg;
 
 	int[] statuss = null;

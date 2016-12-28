@@ -128,23 +128,23 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid
 		portBeSelected : function (eventName, svid) {
-			// switch(eventName){
-			// 	case "portport":
-			// 		alert("端口被点击，查看端口详情！");
-			// 		break;
-			// 	case "openport":
-			// 		alert("打开端口！");
-			// 		break;
-			// 	case "closeport":
-			// 		alert("关闭端口！");
-			// 		break;
-			// 	case "deviceip":
-			// 		alert("查看当前端口连接设备！");
-			// 		break;
-			// 	case "":
-			// 		alert("不知道点了哪里了！");
-			// 		break;
-			// }
+			switch(eventName){
+				case "portport":
+					alert("端口被点击，查看端口详情！");
+					break;
+				case "openport":
+					alert("打开端口！");
+					break;
+				case "closeport":
+					alert("关闭端口！");
+					break;
+				case "deviceip":
+					alert("查看当前端口连接设备！");
+					break;
+				case "":
+					alert("不知道点了哪里了！");
+					break;
+			}
 			var remoteObject = rap.getRemoteObject(this);
 			remoteObject.notify("Selection", {
 				"index" : eventName,
@@ -163,7 +163,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			if (this.ready) {
 				var area = this._parent.getClientArea();
 				 this.updateContainerSize();
-				console.log("resizeLayout:",area);
+				// console.log("resizeLayout:",area);
 				if(Math.abs(area[2]-this._svgSize.width)<5 && Math.abs(area[3]-this._svgSize.height)<5){ return; }
 				// this.refreshSize(area[0],area[1],area[2],area[3]);
 			}

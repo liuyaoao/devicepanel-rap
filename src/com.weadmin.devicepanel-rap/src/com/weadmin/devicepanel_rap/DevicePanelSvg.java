@@ -229,7 +229,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 	protected ArrayList<CustomRes> getCustomRes() {
 		ArrayList<CustomRes> res = new ArrayList<>();
 		res.add(new CustomRes("main.css", true, true));
-		res.add(new CustomRes("d3.v3.min.js", true, false));
+		// res.add(new CustomRes("d3.v3.min.js", true, false));
 		res.add(new CustomRes("jquery.js", true, false));
 		res.add(new CustomRes("menuPanel.js", true, false));
 		res.add(new CustomRes("svgChartPanel.js", true, false));

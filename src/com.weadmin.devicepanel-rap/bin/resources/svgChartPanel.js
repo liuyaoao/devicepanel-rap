@@ -16,11 +16,12 @@
       this.statusArr = options.statusArr || [];
       this.tooltipDataArr = options.tooltipDataArr || [];
       this.svgContainer = null;
+      this.tooltipTitle = null;
       this.svgJqObj = null; //svg的jquery对象
       this.portJqEleMap = {}; //端口号的jquery对象map
       this.portLightJqElMap = []; //端口灯号的jquery对象map
-      this.portHandleD3ElMap = []; //端口号的处理操作的图形，每个元素都是d3对象
-      this.portTipTitleD3Map = {};
+      this.portHandleJqElMap = []; //端口号的处理操作的图形，
+      this.portTipTitleJqMap = {};
       this.selectedNodeId = '';
       this.svgWidth = 0;
       this.svgHeight = 0;
@@ -34,9 +35,9 @@
 
       this.blinkLightMap = {}; //哪些指示灯需要闪烁。
       this.initElement();
-      this.addEvent();
     },
     initElement:function(){
+      var _this = this;
       var element = this.svgContainer= document.createElement( "div" );
 	    element.style.position = "absolute";
 	    element.style.left = "0";
@@ -44,6 +45,7 @@
 			element.style.overflow="auto";
 			// element.style.backgroundColor ="#7f707f";
 			$(element).addClass("svgContainer").html(this.svgTxt);
+      this.tooltipTitle = $(element).find("svg title:first").clone();
 			$(element).find("svg title").remove();
       this.svgJqObj = $(element).find("svg");
       this.svgWidth = (this.svgJqObj.attr("width")).split("in")[0] *96; //unit 'in' to 'px' have to multiply by 100.
@@ -51,21 +53,24 @@
       $(this.container).append( element );
       // console.log("this.svgTxt------>:",this.svgTxt);
       //重新格式一下svg的结构，获取网线端口元素数组。
-      this.formatSvgXml();
-      this.createPortHandleEl();
-      this.createToolTip();
-      this.createIntervalTimer();
+      setTimeout(function(){
+        _this.formatSvgXml();
+        _this.createPortHandleEl();
+        _this.createToolTip();
+        _this.createIntervalTimer();
+        _this.addEvent();
+      },10);
     },
     addEvent:function(){
       var _this = this;
-      for(var key in this.portHandleD3ElMap){
-        var portRect = this.portHandleD3ElMap[key];
-        portRect.on("contextmenu", function(){ //响应鼠标右键事件
+      for(var key in this.portHandleJqElMap){
+        var portRect = this.portHandleJqElMap[key];
+        portRect.on("contextmenu", function(event){ //响应鼠标右键事件
           var pos = $(this).position();
           var menuWidth = _this.menuPanel.getWidth();
           var menuHeight = _this.menuPanel.getHeight();
           var svgPos = $(this).closest("svg").position();
-    			_this.selectedNodeId = d3.select(this).attr("data-nodeid");
+    			_this.selectedNodeId = $(this).attr("data-nodeid");
           var destPos = {left:pos.left-svgPos.left,top:pos.top-svgPos.top};
           if(destPos.left+menuWidth+20>_this.svgWidth){
             destPos.left = _this.svgWidth-menuWidth-20;
@@ -74,16 +79,16 @@
             destPos.top = _this.svgHeight-menuHeight;
           }
     			_this.menuPanel.showMenuPanel(destPos,_this.selectedNodeId);
-    			d3.event.preventDefault();
+    			event.preventDefault();
         });
   			portRect.on("click", function (d, index) {
-  				_this.portBeSelected("portport" , d3.select(this).attr('data-nodeid'));
+  				_this.portBeSelected("portport" , $(this).attr('data-nodeid'));
   			});
         portRect.on("mouseover", function () {
-  				d3.select(this).attr("stroke-width", "1");
+  				$(this).attr("stroke-width", "1");
   			});
   			portRect.on("mouseout", function () {
-  				d3.select(this).attr("stroke-width", "0");
+  				$(this).attr("stroke-width", "0");
           setTimeout(function(){ //this is necessary
             _this.menuPanel.hideMenuPanel();
           },50);
@@ -122,8 +127,8 @@
         var cloneEl = el.clone();
         cloneEl.removeAttr("id").removeAttr("class").find("path").removeAttr("class").css("cursor","pointer");
         el.after(cloneEl);
-        this.portHandleD3ElMap[key] = d3.select(cloneEl[0]);
-        this.portHandleD3ElMap[key].attr("data-nodeid", key)
+        this.portHandleJqElMap[key] = $(cloneEl[0]);
+        this.portHandleJqElMap[key].attr("data-nodeid", key)
         .attr("fill", "#FFF")
         .attr("fill-opacity", "0")
         .attr("stroke", "#fff")
@@ -131,12 +136,17 @@
       }
     },
     createToolTip:function(){
-      for(var key in this.portHandleD3ElMap){
-        var titleTip = this.portHandleD3ElMap[key].append("svg:title");
+      var _this = this;
+      for(var key in this.portHandleJqElMap){
+        var portRect = _this.portHandleJqElMap[key];
+        var titleTip = this.tooltipTitle.clone();
+        titleTip.attr("tooltip","1");
         var tooltipStr = this.tooltipDataArr[+key-1] || "端口信息";
   			titleTip.text(tooltipStr.replace(/<br>/g,'\n'));
-        this.portTipTitleD3Map[key] = titleTip;
+        this.portTipTitleJqMap[key] = titleTip;
+        this.portHandleJqElMap[key].prepend(titleTip);
       }
+      // $(this.svgContainer).find("svg title[tooltip!=1]").remove();
     },
     createIntervalTimer:function(){
       var _this = this;
@@ -155,7 +165,8 @@
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
         var colorValue = this.statusColorMap[this.statusArr[+key-1] ||""];
-        g_el.find("path").css("fill",colorValue);
+        g_el.find("path") && g_el.find("path").css("fill",colorValue);
+        g_el.find("ellipse") && g_el.find("ellipse").css("fill",colorValue);
       }
     },
     stopIndicatorLightBlink:function(){
@@ -163,9 +174,11 @@
         var g_el = this.blinkLightMap[key];
         var statusVal = this.statusArr[+key-1];
         if(this.noNeedBlinkStatusArr.indexOf(statusVal) != -1){
-          g_el.find("path").css("fill",this.statusColorMap[statusVal]);
+          g_el.find("path") && g_el.find("path").css("fill",this.statusColorMap[statusVal]);
+          g_el.find("ellipse") && g_el.find("ellipse").css("fill",this.statusColorMap[statusVal]);
         }else{
-          g_el.find("path").css("fill","black");
+          g_el.find("path") && g_el.find("path").css("fill","black");
+          g_el.find("ellipse") && g_el.find("ellipse").css("fill","black");
         }
       }
     },
@@ -189,8 +202,8 @@
       for(var i=0;i<tooltipDataArr.length;i++){
         var key = i + 1;
         var tooltipStr = tooltipDataArr[i] || '';
-        var d3Title = this.portTipTitleD3Map[key];
-        d3Title && d3Title.text(tooltipStr.replace(/<br>/g,'\n'));
+        var jqTitle = this.portTipTitleJqMap[key];
+        jqTitle && jqTitle.text(tooltipStr.replace(/<br>/g,'\n'));
       }
     },
     portBeSelected:function(eventName,nodeid){
@@ -206,8 +219,8 @@
       this.svgJqObj.closest("div").css("transform","scale(0.5,0.5) translate(-50%,-50%)");
     },
     updatePortHandleStrokeColor:function(){
-      for(var key in this.portHandleD3ElMap){
-        this.portHandleD3ElMap[key].attr("stroke",this.strokeColorMap[this.statusArr[+key-1]]);
+      for(var key in this.portHandleJqElMap){
+        this.portHandleJqElMap[key].attr("stroke",this.strokeColorMap[this.statusArr[+key-1]]);
       }
     },
     getValueFromStr:function(str){

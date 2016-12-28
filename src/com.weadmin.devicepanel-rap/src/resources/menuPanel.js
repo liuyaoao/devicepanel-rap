@@ -17,7 +17,7 @@
       this.menuWidth = 0;
       this.menuHeight = 0;
       this.isMouseIn = false;
-      this.menuPanelD3 = null;
+      this.menuPanelJq = null;
       this.initElement();
       this.addEvent();
     },
@@ -27,23 +27,29 @@
       ele.setAttribute("class","menu");
       ele.style.display="none";
       $(this.container).append( ele );
-      this.menuPanelD3 = d3.select(ele);
-      var ulul = this.menuPanelD3.append("ul");
+      this.menuPanelJq = $(ele);
+      var ulul = $("<ul></ul>");
+      this.menuPanelJq.append(ulul);
 			var arraymenu = this.menuDesc.split(":");
 			for (var i = 0; i < arraymenu.length; i++) {
-				var lia = ulul.append("li").append("a").style("cursor", "pointer").text(arraymenu[i]);
+        var lia = $("<li></li>");
+				ulul.append(lia);
+        var aTag = $("<a href='javascript:;' data-index='"+i+"'></a>");
+        lia.append(aTag);
+        aTag.css("cursor", "pointer").text(arraymenu[i]);
 			}
-      this.menuWidth = $(ele).width();
-      this.menuHeight = $(ele).height();
+      this.menuWidth = this.menuPanelJq.width();
+      this.menuHeight = this.menuPanelJq.height();
     },
     addEvent:function(){
       var _this = this;
-      var ulul = this.menuPanelD3.select("ul");
-      ulul.selectAll("a").on("click", function (d, i) {
-        var eventName = _this.eventNameMap[i] || 'openport';
+      var ulul = this.menuPanelJq.find("ul");
+      ulul.find("a").on("click", function () {
+        var index = $(this).attr("data-index");
+        var eventName = _this.eventNameMap[index] || 'openport';
 				_this.clickMenuCall && _this.clickMenuCall(eventName,_this.selectedNodeId);
 			});
-      this.menuPanelD3.on('mouseenter', function(){
+      this.menuPanelJq.on('mouseenter', function(){
         _this.isMouseIn = true;
       })
       .on('mouseleave', function(){
@@ -53,13 +59,13 @@
     },
     showMenuPanel:function(position, selectedNodeId){
       this.selectedNodeId = selectedNodeId;
-			this.menuPanelD3.style('left', (position.left+20) + "px")
-			.style('top', (position.top) + "px")
-			.style('display', 'inline-block');
+			this.menuPanelJq.css('left', (position.left+20) + "px")
+			.css('top', (position.top) + "px")
+			.css('display', 'inline-block');
     },
     hideMenuPanel:function(){
       if(!this.isMouseIn){
-        this.menuPanelD3.style('display', 'none');
+        this.menuPanelJq.css('display', 'none');
       }
     },
     getWidth:function(){
