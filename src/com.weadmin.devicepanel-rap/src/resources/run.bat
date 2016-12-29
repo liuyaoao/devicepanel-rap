@@ -1,0 +1,2 @@
+node readFile.js
+pause

@@ -146,7 +146,6 @@
         this.portTipTitleJqMap[key] = titleTip;
         this.portHandleJqElMap[key].prepend(titleTip);
       }
-      // $(this.svgContainer).find("svg title[tooltip!=1]").remove();
     },
     createIntervalTimer:function(){
       var _this = this;
