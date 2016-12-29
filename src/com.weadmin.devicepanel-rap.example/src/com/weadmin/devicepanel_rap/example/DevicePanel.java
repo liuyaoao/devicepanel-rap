@@ -93,8 +93,8 @@ public class DevicePanel extends Dialog {
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).extendedMargins(0, 0, 0, -30).spacing(0, 0).applyTo(parent);
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
 		deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
-		deviceSvg.setStatuss(createStatusArr(50));
-		deviceSvg.setTooltipdata(createTooltipArr(50));
+		deviceSvg.setStatuss(createStatusMap(50));
+		deviceSvg.setTooltipdata(createTooltipMap(50));
 		deviceSvg.addOneSvgPanelById(sysObjId);
 
 		parent.getDisplay().timerExec(100, new Runnable() {
@@ -189,12 +189,26 @@ public class DevicePanel extends Dialog {
 		}
 		return statusArr;
 	}
+	private JsonObject createStatusMap(int num){
+		JsonObject statusMap = new JsonObject();
+		for(int i=0;i<num;i++){
+			statusMap.set(""+(i+1), getRangeRandomNum(0,5));
+		}
+		return statusMap;
+	}
 	private String[] createTooltipArr(int num){
 		String[] tooltipArr = new String[num];
 		for(int i=0;i<num;i++){
 			tooltipArr[i] = "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9";
 		}
 		return tooltipArr;
+	}
+	private JsonObject createTooltipMap(int num){
+		JsonObject tooltipMap = new JsonObject();
+		for(int i=0;i<num;i++){
+			tooltipMap.set(""+(i+1), "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9");
+		}
+		return tooltipMap;
 	}
 	private int getRangeRandomNum(int min, int max){
 		return (new Random().nextInt(max - min) + min);

@@ -39,9 +39,9 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		this._updatedata = true;
 		this._tooltipdesc = "";
 		this._menudesc = "";
-		this._tooltipDataArr = [];
+		this._tooltipDataMap = null;
 		this._selectnodeid = "";
-		this._statuss = []; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
+		this._statussMap = null; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
 		this._uniqueId = Math.random().toString(36).split(".")[1];
 		rap.on("render", this.onRender);
 
@@ -65,8 +65,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					uniqueId:this._uniqueId,
 					menuPanel:this.menuPanel,
 					svgTxt:this._svgTxt,
-					statusArr:this._statuss,
-					tooltipDataArr:this._tooltipDataArr,
+					statusMap:this._statussMap,
+					tooltipDataMap:this._tooltipDataMap,
 					portBeSelectedCall:function(eventName,svid){
 						_this.portBeSelected(eventName,svid);
 					}
@@ -105,12 +105,12 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		getMenudesc : function () {
 			return this._menudesc;
 		},
-		setStatuss : function (statuss) {
-			// console.log('statusArr:',statuss);
-			this._statuss = statuss;
+		setStatuss : function (statussMap) {
+			// console.log('statusMap:',statuss);
+			this._statussMap = statussMap;
 		},
 		setTooltipdata : function (tooltipdata) {
-			this._tooltipDataArr = tooltipdata;
+			this._tooltipDataMap = tooltipdata;
 		},
 		setSvgSize:function(svgSize){
 			this._svgSize = svgSize || "";
@@ -123,8 +123,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		refreshAll:function(){ //更新所有显示。状态和提示。
 			// console.log('refreshAll!!!!!!!!!!');
-			this.svgChartPanel.updateStatus(this._statuss);
-			this.svgChartPanel.updateTooltip(this._tooltipDataArr);
+			this.svgChartPanel.updateStatus(this._statussMap);
+			this.svgChartPanel.updateTooltip(this._tooltipDataMap);
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid
 		portBeSelected : function (eventName, svid) {

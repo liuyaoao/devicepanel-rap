@@ -1,14 +1,22 @@
-
-    console.log('--------开始读取文件--------');  
+/**
+* 处理svg文件的nodejs脚本文件，直接点击run.bat文件即可运行。
+*   注意：一定要把待处理的svg文件放在同级目录下的svgs文件夹里。
+*
+* 这个文件会对svg文件做如下处理：在方法：handlerFileContent()里可看到。
+* 1、修改所有的样式类名。就是给其加一个随机字符串后缀，使每个文件的每个类名都唯一。
+* 2、去掉很多在visio导出到svg时生成的多余的属性和标签。为了减小svg文件的体积。
+*/
+    console.log('\n===================开始读取文件===================\n');  
       
     var fs= require('fs');  
     var util = require('util');
     var dirPath = "./svgs";
-    // var reg1 = new RegExp(".st",["g"]); 
-    // var reg2 = new RegExp("st",["g"]); 
-
+    var allFilesCount = 0;
+    var handledFilesCount = 0;
 
     function readAllFiles(path){
+        allFilesCount = 0;
+        handledFilesCount = 0;
         fs.readdir(path, function(err,files){
             if(err){ //如果是有错误的。
                 console.log("error:\n"+err);
@@ -16,6 +24,7 @@
             }
             //if correct 
             var filesNum = 0;
+            allFilesCount = files.length;
             files.forEach(function(file){
                 fs.stat(path + '/' + file, function(err, stat){
                     if(err){
@@ -35,16 +44,19 @@
 
     function readOneFile(path,file,filesNum){
         fs.readFile(path+'/'+file,'utf-8',function(err,data){ 
-            if(err){  
-                console.log(err);  
-                return;
-            }
+            if(err){  console.log(err);   return; }
+
             var newData = handlerFileContent(data);
             if(newData.isChanged){
                 fs.writeFile(path+'/'+file,newData.data);
                 console.log("第"+filesNum+"文件处理完成，文件名："+file);
             }else{ //have not replace any string. means this file not changed.
                 console.log("第"+filesNum+"文件没有任何改动，文件名："+file);
+            }
+            // ===================分割线=============
+            handledFilesCount++;
+            if(handledFilesCount == allFilesCount){
+                console.log('\n===================所有文件处理完成===================');
             }
             
         });

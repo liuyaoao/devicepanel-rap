@@ -35,9 +35,9 @@ public class DevicePanelSvg extends SVWidgetBase {
 	 private String sysObjId = "";
 	 private String svgTxt = "";
 	 private JsonObject svgSize = null;
-	 private int[] statuss;
+	 private JsonObject statuss;
 	 private String menudesc;
-	 private String[] tooltipdata;
+	 private JsonObject tooltipdata;
 
 	public DevicePanelSvg(Composite parent, int style) {
 		super(parent,style);
@@ -73,7 +73,7 @@ public class DevicePanelSvg extends SVWidgetBase {
   public void addOneSvgPanelBySvgTxt(String svgtxt){
     setSvgTxt(svgtxt);
   }
-	public void refreshAll(int[] statuss, String[] tooltipdata) {
+	public void refreshAll(JsonObject statuss, JsonObject tooltipdata) {
 		setStatuss(statuss);
 		setTooltipdata(tooltipdata);
 		super.callRemoteMethod("refreshAll", JsonObject.readFrom("{}"));
@@ -103,29 +103,25 @@ public class DevicePanelSvg extends SVWidgetBase {
 		remoteObject.set( "menudesc", menudesc );
 		}
 	}
-	public String[] getTooltipdata() {
+	public JsonObject getTooltipdata() {
 		checkWidget();
-		return tooltipdata == null ? null : tooltipdata.clone();
+		return tooltipdata == null ? null : JsonObject.readFrom(tooltipdata.asString());
 	}
 
-	public void setTooltipdata(String... tooltipdata) {
+	public void setTooltipdata(JsonObject tooltipdata) {
 		//checkWidget();
-		if (!Arrays.equals(this.tooltipdata, tooltipdata)) {
-			this.tooltipdata = tooltipdata.clone();
-			remoteObject.set("tooltipdata", jsonArray(tooltipdata));
-		}
+		this.tooltipdata = tooltipdata;
+		remoteObject.set("tooltipdata", tooltipdata);//JsonObject.readFrom(tooltipdata.asString()));
 	}
-	public int[] getStatuss() {
+	public JsonObject getStatuss() {
 		checkWidget();
-		return statuss == null ? null : statuss.clone();
+		return statuss == null ? new JsonObject() : JsonObject.readFrom(statuss.asString());
 	}
 
-	public void setStatuss(int... statuss) {
+	public void setStatuss(JsonObject statuss) {
 		//checkWidget();
-		if (!Arrays.equals(this.statuss, statuss)) {
-			this.statuss = statuss.clone();
-			remoteObject.set("statuss", jsonArray(statuss));
-		}
+		this.statuss = statuss;
+		remoteObject.set("statuss", statuss);//JsonObject.readFrom(statuss.asString()));
 	}
 	/* 获取svg文件内容文本字符串*/
 	public String getSvgTxt() {

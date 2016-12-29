@@ -13,8 +13,8 @@
       this.uniqueId = options.uniqueId;
       this.svgTxt = options.svgTxt || '';
       this.portBeSelectedCall = options.portBeSelectedCall;
-      this.statusArr = options.statusArr || [];
-      this.tooltipDataArr = options.tooltipDataArr || [];
+      this.statusMap = options.statusMap || {};
+      this.tooltipDataMap = options.tooltipDataMap || {};
       this.svgContainer = null;
       this.tooltipTitle = null;
       this.svgJqObj = null; //svg的jquery对象
@@ -28,7 +28,7 @@
       this.blinkFlag = 0; //
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
-      this.noNeedBlinkStatusArr = [0,4,5];
+      this.noNeedBlinkstatusMap = [0,4,5];
       // 默认：黑色， 0：深灰色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
       this.statusColorMap = {"":"#080808", 0:"#080808", 1:"#19E807", 2:"#FFF20B", 3:"#FF1411", 4:"#2813E8", 5:"#FF6600"};
       this.strokeColorMap = {"":"#8819E8", 0:"#FF1411", 1:"#FF11FF", 2:"#9011FF", 3:"#3B12E8", 4:"#FF5C08", 5:"#00FFDC"};
@@ -141,7 +141,7 @@
         var portRect = _this.portHandleJqElMap[key];
         var titleTip = this.tooltipTitle.clone();
         titleTip.attr("tooltip","1");
-        var tooltipStr = this.tooltipDataArr[+key-1] || "端口信息";
+        var tooltipStr = this.tooltipDataMap[key] || "端口信息";
   			titleTip.text(tooltipStr.replace(/<br>/g,'\n'));
         this.portTipTitleJqMap[key] = titleTip;
         this.portHandleJqElMap[key].prepend(titleTip);
@@ -163,7 +163,7 @@
     startIndicatorLightBlink:function(){
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
-        var colorValue = this.statusColorMap[this.statusArr[+key-1] ||""];
+        var colorValue = this.statusColorMap[this.statusMap[key] ||""];
         g_el.find("path") && g_el.find("path").css("fill",colorValue);
         g_el.find("ellipse") && g_el.find("ellipse").css("fill",colorValue);
       }
@@ -171,8 +171,8 @@
     stopIndicatorLightBlink:function(){
       for(var key in this.blinkLightMap){
         var g_el = this.blinkLightMap[key];
-        var statusVal = this.statusArr[+key-1];
-        if(this.noNeedBlinkStatusArr.indexOf(statusVal) != -1){
+        var statusVal = this.statusMap[key] || "";
+        if(this.noNeedBlinkstatusMap.indexOf(statusVal) != -1){
           g_el.find("path") && g_el.find("path").css("fill",this.statusColorMap[statusVal]);
           g_el.find("ellipse") && g_el.find("ellipse").css("fill",this.statusColorMap[statusVal]);
         }else{
@@ -182,11 +182,10 @@
       }
     },
     // 更新端口状态
-    updateStatus : function (statusArr) {
-      this.statusArr = statusArr;
-      for(var i=0;i<statusArr.length;i++){
-        var key = i + 1;
-        var value = statusArr[i] || '';
+    updateStatus : function (statusMap) {
+      this.statusMap = statusMap;
+      for(var key in statusMap){
+        var value = statusMap[key] || '';
         var portEl = this.portJqEleMap[key];
         var portLightEl = this.portLightJqElMap[key];
         var colorValue = this.statusColorMap[value];
@@ -196,11 +195,10 @@
       this.updatePortHandleStrokeColor();
 		},
     // 更新端口的鼠标悬停提示面板
-    updateTooltip:function(tooltipDataArr){
-      this.tooltipDataArr = tooltipDataArr;
-      for(var i=0;i<tooltipDataArr.length;i++){
-        var key = i + 1;
-        var tooltipStr = tooltipDataArr[i] || '';
+    updateTooltip:function(tooltipDataMap){
+      this.tooltipDataMap = tooltipDataMap;
+      for(var key in tooltipDataMap){
+        var tooltipStr = tooltipDataMap[key] || '';
         var jqTitle = this.portTipTitleJqMap[key];
         jqTitle && jqTitle.text(tooltipStr.replace(/<br>/g,'\n'));
       }
@@ -219,7 +217,7 @@
     },
     updatePortHandleStrokeColor:function(){
       for(var key in this.portHandleJqElMap){
-        this.portHandleJqElMap[key].attr("stroke",this.strokeColorMap[this.statusArr[+key-1]]);
+        this.portHandleJqElMap[key].attr("stroke",this.strokeColorMap[this.statusMap[key]||""]);
       }
     },
     getValueFromStr:function(str){
