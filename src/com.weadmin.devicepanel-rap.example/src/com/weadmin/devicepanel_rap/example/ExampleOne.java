@@ -32,7 +32,7 @@ public class ExampleOne extends AbstractEntryPoint{
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	protected void createContents(Composite parent) {
-		parent.setLayout(new GridLayout());
+		parent.setLayout(new GridLayout(3,false));
 //		parent.setLayout(null);
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Refresh");
@@ -40,6 +40,8 @@ public class ExampleOne extends AbstractEntryPoint{
 		zoomInBtn.setText("zoomIn(+)");
 		Button zoomOutBtn = new Button(parent, SWT.PUSH);
 		zoomOutBtn.setText("zoomOut(-)");
+		Button saveModifiedSvgBtn = new Button(parent, SWT.PUSH);
+		saveModifiedSvgBtn.setText("save");
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
@@ -49,12 +51,12 @@ public class ExampleOne extends AbstractEntryPoint{
 		deviceSvg.addOneSvgPanelById(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		//add number 2 svg panel
-		DevicePanelSvg deviceSvg2 = new DevicePanelSvg(parent, SWT.NONE);
-		String sysObjId2 = "svg06"; //svg file name.
-		deviceSvg2.setStatuss(createStatusMap(50));
-		deviceSvg2.setTooltipdata(createTooltipMap(50));
-		deviceSvg2.addOneSvgPanelById(sysObjId2);
-		deviceSvg2.setLayoutData(new GridData(GridData.FILL_BOTH));
+//		DevicePanelSvg deviceSvg2 = new DevicePanelSvg(parent, SWT.NONE);
+//		String sysObjId2 = "svg01"; //svg file name.
+//		deviceSvg2.setStatuss(createStatusMap(50));
+//		deviceSvg2.setTooltipdata(createTooltipMap(50));
+//		deviceSvg2.addOneSvgPanelById(sysObjId2);
+//		deviceSvg2.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 
 		button.addSelectionListener(new SelectionAdapter() {
@@ -85,6 +87,12 @@ public class ExampleOne extends AbstractEntryPoint{
 				tempSize.set("width",valWidth*0.9 );
 				tempSize.set("height",valHeight*0.9 );
 				deviceSvg.refreshSize(tempSize);
+			}
+		});
+		saveModifiedSvgBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				deviceSvg.rewriteSvgFile();
 			}
 		});
 	}

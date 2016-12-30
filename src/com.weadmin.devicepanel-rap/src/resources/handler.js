@@ -14,8 +14,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			return new svgdevicepanel.devicepanelsvgjs(properties);
 		},
 		destructor : "destroy",
-		methods: ["refreshAll","refreshSize"],
-		properties : ["svgSize", "spacing", "statuss", "menudesc", "tooltipdata","svgTxt"],
+		methods: ["refreshAll","refreshSize","getModifiedSvgTxt"],
+		properties : ["svgSize", "spacing", "statuss", "interfaceNameList", "menudesc", "tooltipdata","svgTxt"],
 		events : ["Selection"]
 	});
 
@@ -39,9 +39,10 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		this._updatedata = true;
 		this._tooltipdesc = "";
 		this._menudesc = "";
-		this._tooltipDataMap = null;
+		this._tooltipDataMap = {};
+		this._interfaceNameList = [];
 		this._selectnodeid = "";
-		this._statussMap = null; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
+		this._statussMap = {}; //指示灯的状态: 0down 1 up 2  Testing 3 Alarm 4 Other  5 Unknown
 		this._uniqueId = Math.random().toString(36).split(".")[1];
 		rap.on("render", this.onRender);
 
@@ -67,6 +68,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					svgTxt:this._svgTxt,
 					statusMap:this._statussMap,
 					tooltipDataMap:this._tooltipDataMap,
+					interfaceNameList:this._interfaceNameList,
 					portBeSelectedCall:function(eventName,svid){
 						_this.portBeSelected(eventName,svid);
 					}
@@ -102,12 +104,15 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		setMenudesc : function (menudesc) {
 			this._menudesc = menudesc;
 		},
+		setInterfaceNameList : function (interfaceNameList) {
+			this._interfaceNameList = interfaceNameList;
+		},
 		getMenudesc : function () {
 			return this._menudesc;
 		},
-		setStatuss : function (statussMap) {
+		setStatuss : function (statuss) {
 			// console.log('statusMap:',statuss);
-			this._statussMap = statussMap;
+			this._statussMap = statuss;
 		},
 		setTooltipdata : function (tooltipdata) {
 			this._tooltipDataMap = tooltipdata;
@@ -117,6 +122,10 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		setSvgTxt:function(svgTxt){
 			this._svgTxt = svgTxt || "";
+		},
+		getModifiedSvgTxt:function(){
+			this._svgTxt = this.svgChartPanel.getModifiedSvgTxt();
+			rap.getRemoteObject( this ).set( "svgTxt", this._svgTxt);
 		},
 		getSizeFromSvg:function(){
 			this._svgSize = this.svgChartPanel.getSize();
@@ -128,23 +137,23 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid
 		portBeSelected : function (eventName, svid) {
-			// switch(eventName){
-			// 	case "portport":
-			// 		alert("端口被点击，查看端口详情！");
-			// 		break;
-			// 	case "openport":
-			// 		alert("打开端口！");
-			// 		break;
-			// 	case "closeport":
-			// 		alert("关闭端口！");
-			// 		break;
-			// 	case "deviceip":
-			// 		alert("查看当前端口连接设备！");
-			// 		break;
-			// 	case "":
-			// 		alert("不知道点了哪里了！");
-			// 		break;
-			// }
+			switch(eventName){
+				case "portport":
+					alert("端口被点击，查看端口详情！");
+					break;
+				case "openport":
+					alert("打开端口！");
+					break;
+				case "closeport":
+					alert("关闭端口！");
+					break;
+				case "deviceip":
+					alert("查看当前端口连接设备！");
+					break;
+				case "":
+					alert("不知道点了哪里了！");
+					break;
+			}
 			var remoteObject = rap.getRemoteObject(this);
 			remoteObject.notify("Selection", {
 				"index" : eventName,

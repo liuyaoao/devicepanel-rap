@@ -34,10 +34,12 @@ public class DevicePanelSvg extends SVWidgetBase {
 	 private static final long serialVersionUID = -7580109674486263420L;
 	 private String sysObjId = "";
 	 private String svgTxt = "";
+	 private String svgTxtPrefix = ""; //svg files header,当重新写入svg的时候还要加上的。
 	 private JsonObject svgSize = null;
 	 private JsonObject statuss;
 	 private String menudesc;
 	 private JsonObject tooltipdata;
+	 private String[] interfaceNameList;
 
 	public DevicePanelSvg(Composite parent, int style) {
 		super(parent,style);
@@ -131,10 +133,13 @@ public class DevicePanelSvg extends SVWidgetBase {
 	public void setSvgTxt(String svgtxt) {
 		checkWidget();
     int index = svgtxt.indexOf("<svg");
+		this.svgTxtPrefix = svgtxt.substring(0,index);
+		// System.out.println("svgTxtPrefix:"+svgTxtPrefix);
 		svgtxt = svgtxt.substring(index);
 		this.svgTxt = svgtxt;
 		remoteObject.set( "svgTxt", svgtxt );
 	}
+
 	public JsonObject getSvgSize(){
 		return this.svgSize;
 	}
@@ -144,6 +149,22 @@ public class DevicePanelSvg extends SVWidgetBase {
 	public double getHeight(){
 		return this.svgSize.get("height").asDouble();
 	}
+
+	public String[] getInterfaceNameList(){
+		return this.interfaceNameList;
+	}
+	public void setInterfaceNameList(String[] list){
+		this.interfaceNameList = list;
+		remoteObject.set( "interfaceNameList", jsonArray(list) );
+	}
+	public void rewriteSvgFile(){
+		super.callRemoteMethod("getModifiedSvgTxt", JsonObject.readFrom("{}"));
+		System.out.println("modified svgtxt:"+this.svgTxt);
+		String wholeTxt = this.svgTxtPrefix + this.svgTxt;
+		// TODO
+	}
+
+// ==================================
 	private static JsonArray jsonArray(int[] values) {
 		JsonArray array = new JsonArray();
 		for (int i = 0; i < values.length; i++) {
@@ -190,14 +211,16 @@ public class DevicePanelSvg extends SVWidgetBase {
 	@Override
 	protected void handleSetProp(JsonObject properties) {
 		JsonValue sizeValue = properties.get( "svgSize" );
-      if( sizeValue != null ) {
-        String sizeStr = sizeValue.asString();
-				JsonObject obj = JsonObject.readFrom(sizeStr);
-				this.svgSize = obj;
-				// System.out.println("svgSize:"+sizeStr);
-				// System.out.println("svgSize obj.width:"+obj.get("width"));
-				// System.out.println("svgSize obj.height:"+obj.get("height"));
-      }
+		JsonValue svgtxt = properties.get( "svgTxt" );
+    if( sizeValue != null ) {
+      String sizeStr = sizeValue.asString();
+			JsonObject obj = JsonObject.readFrom(sizeStr);
+			this.svgSize = obj;
+			// System.out.println("svgSize:"+sizeStr);
+    }
+		if( svgtxt != null ) {
+			this.svgTxt = svgtxt.asString();
+		}
 	}
 
 	@Override
