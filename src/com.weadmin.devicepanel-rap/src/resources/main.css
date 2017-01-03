@@ -61,3 +61,8 @@ color:#000;
 .svgContainer{
   -webkit-text-size-adjust:none;
 }
+.portNameDialog{
+  position:absolute;
+  bottom:0;
+  right:0;
+}

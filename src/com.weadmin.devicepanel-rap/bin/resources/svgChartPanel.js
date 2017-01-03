@@ -12,7 +12,6 @@
       this.menuPanel = options.menuPanel;
       this.uniqueId = options.uniqueId;
       this.svgTxt = options.svgTxt || '';
-      this.originSvgTxt = this.svgTxt;
       this.portBeSelectedCall = options.portBeSelectedCall;
       this.statusMap = options.statusMap || {};
       this.tooltipDataMap = options.tooltipDataMap || {};
@@ -22,8 +21,9 @@
       this.svgJqObj = null; //svg的jquery对象
       this.portJqEleMap = {}; //端口号的jquery对象map
       this.portLightJqElMap = []; //端口灯号的jquery对象map
-      this.portHandleJqElMap = []; //端口号的处理操作的path图形，被包裹在portJqEleMap里。
       this.portTipTitleJqMap = {};
+      this.portNum2InterfaceNameMap = {}; // 端口号对应的接口名的map结构。
+      this.interfaceName2portNumMap = {}; // 接口名对应的端口号的map结构。
       this.selectedNodeId = '';
       this.svgWidth = 0;
       this.svgHeight = 0;
@@ -57,9 +57,8 @@
       //重新格式一下svg的结构，获取网线端口元素数组。
       setTimeout(function(){
         _this.formatSvgXml();
-        _this.createPortHandleEl();
         _this.createToolTip();
-        console.log("svg xml:--",element.innerHTML);
+        console.log("svg xml:--",this.svgTxt);
         _this.createIntervalTimer();
         _this.addEvent();
       },10);
@@ -73,7 +72,7 @@
           var menuWidth = _this.menuPanel.getWidth();
           var menuHeight = _this.menuPanel.getHeight();
           var svgPos = $(this).closest("svg").position();
-    			_this.selectedNodeId = $(this).attr("data-nodeid");
+    			_this.selectedNodeId = $(this).attr("data-portname");
           var destPos = {left:pos.left-svgPos.left,top:pos.top-svgPos.top};
           if(destPos.left+menuWidth+20>_this.svgWidth){
             destPos.left = _this.svgWidth-menuWidth-20;
@@ -85,7 +84,7 @@
     			event.preventDefault();
         });
   			portRect.on("click", function (d, index) {
-  				_this.portBeSelected("portport" , $(this).attr('data-nodeid'));
+  				_this.portBeSelected("portport" , $(this).attr('data-portname'));
   			});
         portRect.on("mouseover", function () {
   				$(this).find("path").css("stroke-width", "1");
@@ -109,29 +108,34 @@
         var parentG_jq = el.closest('g');
         var nameCn = el.attr('v:lbl') || "";
         var valueStr = el.attr('v:val');
-        if(!valueStr){ //过滤掉无用的参数。
-          continue;
-        }
-        var key = this.getValueFromStr(valueStr);
+        var key = this.getValueFromStr(valueStr||"");
         var nameKey = this.paramNameMap[nameCn] || nameCn;
-        parentG_jq.attr('class',nameKey+'_'+key);
         if(nameCn == '端口号' || nameCn == 'portNum'){
+          parentG_jq.attr('class',nameKey+'_'+key);
           this.portJqEleMap[key+""] = parentG_jq;
+          parentG_jq.css("cursor","pointer");
+          parentG_jq.attr("data-portnum", key).find("path").css("stroke", "#fff").css("stroke-width", "0");
+        }if(nameCn == 'interfaceName'){
+          parentG_jq.attr("data-portname", key);
+          var gvcpElArr = parentG_jq[0].getElementsByTagName("v:cp");
+          var portNum = '';
+          var interfaceName = '';
+          for(var k=0;k<gvcpElArr.length;k++){
+            var name = $(gvcpElArr[k]).attr('v:lbl') || "";
+            var value = this.getValueFromStr($(gvcpElArr[k]).attr('v:val')||'');
+            if(name=="端口号" || name=="portNum"){
+              portNum = value;
+            }else if(name=="interfaceName"){
+              interfaceName = value;
+            }
+          }
+          this.portNum2InterfaceNameMap[portNum] = interfaceName;
+          this.interfaceName2portNumMap[interfaceName] = portNum;
         }else if(nameCn == '端口灯号' || nameCn == 'portLightNum'){
+          parentG_jq.attr('class',nameKey+'_'+key);
           this.portLightJqElMap[key+""] = parentG_jq;
           this.blinkLightMap[key+""] = parentG_jq;
         }
-      }
-    },
-    // 创建端口用于事件交互的图形。是原端口图形的副本
-    createPortHandleEl:function(){
-      for(var key in this.portJqEleMap){
-        var el = this.portJqEleMap[key];
-        el.css("cursor","pointer");
-        this.portHandleJqElMap[key] = el.find("path");
-        this.portHandleJqElMap[key].attr("data-nodeid", key)
-        .css("stroke", "#fff")
-  			.css("stroke-width", "0");
       }
     },
     createToolTip:function(){
@@ -160,17 +164,19 @@
     },
     // indicator light blink ,指示灯的闪烁
     startIndicatorLightBlink:function(){
-      for(var key in this.blinkLightMap){
-        var g_el = this.blinkLightMap[key];
-        var colorValue = this.statusColorMap[this.statusMap[key] ||""];
+      for(var portNum in this.blinkLightMap){
+        var g_el = this.blinkLightMap[portNum];
+        var portName = this.portNum2InterfaceNameMap[portNum]||"";
+        var colorValue = this.statusColorMap[this.statusMap[portName] ||""];
         g_el.find("path") && g_el.find("path").css("fill",colorValue);
         g_el.find("ellipse") && g_el.find("ellipse").css("fill",colorValue);
       }
     },
     stopIndicatorLightBlink:function(){
-      for(var key in this.blinkLightMap){
-        var g_el = this.blinkLightMap[key];
-        var statusVal = this.statusMap[key] || "";
+      for(var portNum in this.blinkLightMap){
+        var g_el = this.blinkLightMap[portNum];
+        var portName = this.portNum2InterfaceNameMap[portNum]||"";
+        var statusVal = this.statusMap[portName] || "";
         if(this.noNeedBlinkstatusMap.indexOf(statusVal) != -1){
           g_el.find("path") && g_el.find("path").css("fill",this.statusColorMap[statusVal]);
           g_el.find("ellipse") && g_el.find("ellipse").css("fill",this.statusColorMap[statusVal]);
@@ -183,27 +189,29 @@
     // 更新端口状态
     updateStatus : function (statusMap) {
       this.statusMap = statusMap;
-      for(var key in statusMap){
-        var value = statusMap[key] || '';
-        var portEl = this.portJqEleMap[key];
-        var portLightEl = this.portLightJqElMap[key];
+      for(var portName in statusMap){
+        var value = statusMap[portName] || '';
+        var portNum = this.interfaceName2portNumMap[portName] ||'';
+        var portEl = this.portJqEleMap[portNum];
+        var portLightEl = this.portLightJqElMap[portNum];
         var colorValue = this.statusColorMap[value];
         portEl && portEl.find('path').css('fill',colorValue);
         portLightEl && portLightEl.find('path').css('fill',colorValue);
       }
-      this.updatePortHandleStrokeColor();
+      this.updatePortPathStrokeColor();
 		},
     // 更新端口的鼠标悬停提示面板
     updateTooltip:function(tooltipDataMap){
       this.tooltipDataMap = tooltipDataMap;
-      for(var key in tooltipDataMap){
-        var tooltipStr = tooltipDataMap[key] || '';
-        var jqTitle = this.portTipTitleJqMap[key];
+      for(var portName in tooltipDataMap){
+        var tooltipStr = tooltipDataMap[portName] || '';
+        var portNum = this.interfaceName2portNumMap[portName] ||'';
+        var jqTitle = this.portTipTitleJqMap[portNum];
         jqTitle && jqTitle.text(tooltipStr.replace(/<br>/g,'\n'));
       }
     },
-    portBeSelected:function(eventName,nodeid){
-      this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,nodeid]);
+    portBeSelected:function(eventName,portName){
+      this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,portName]);
     },
     getSize:function(){
       return {width:+(this.svgWidth.toFixed(2)), height:+(this.svgHeight.toFixed(2))};
@@ -214,9 +222,9 @@
       this.svgJqObj.css({"width":2 * this.svgWidth,height:2 * this.svgHeight});
       this.svgJqObj.closest("div").css("transform","scale(0.5,0.5) translate(-50%,-50%)");
     },
-    updatePortHandleStrokeColor:function(){
-      for(var key in this.portHandleJqElMap){
-        this.portHandleJqElMap[key].css("stroke",this.strokeColorMap[this.statusMap[key]||""]);
+    updatePortPathStrokeColor:function(){
+      for(var key in this.portJqEleMap){
+        this.portJqEleMap[key].find("path").css("stroke",this.strokeColorMap[this.statusMap[key]||""]);
       }
     },
     getModifiedSvgTxt:function(){
