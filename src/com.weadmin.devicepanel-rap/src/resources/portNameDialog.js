@@ -67,6 +67,7 @@
       });
     },
     setPortName:function(portName,portEle){
+      portEle.attr('data-portname', portName);
       var v_cpEleArr = portEle[0].getElementsByTagName("v:cp");
       for(var i=0;i<v_cpEleArr.length;i++){
         var el = $(v_cpEleArr[i]);
