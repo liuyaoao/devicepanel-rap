@@ -58,11 +58,29 @@ color:#000;
 background:#dfc184;
 color:#000;
 }
+.menu ul li a.mousedownBack{
+  background: #757510;
+}
+.mousedownEle{
+  position: absolute;
+  z-index: 999999;
+  display: inline-block;
+  text-align:center;
+  text-decoration:none;
+  padding: 5px;
+  border: 1px solid #A3BB44;
+  border-radius: 2px 3px;
+  background: #AECC33;
+  opacity: 0.5;
+}
 .svgContainer{
   -webkit-text-size-adjust:none;
 }
 .portNameDialog{
   position:absolute;
-  bottom:0;
-  right:0;
+  top: 0;
+  right: 0;
+  height: 200px;
+  width: 130px;
+  overflow: auto;
 }

@@ -87,9 +87,13 @@
   				_this.portBeSelected("portport" , $(this).attr('data-portname'));
   			});
         portRect.on("mouseover", function () {
+          var portNum = $(this).attr("data-portnum");
+          $(this).addClass('mouseover'+_this.uniqueId);
   				$(this).find("path").css("stroke-width", "1");
   			});
   			portRect.on("mouseout", function () {
+          var that = $(this);
+          $(this).removeClass('mouseover'+_this.uniqueId);
   				$(this).find("path").css("stroke-width", "0");
           setTimeout(function(){ //this is necessary
             _this.menuPanel.hideMenuPanel();
