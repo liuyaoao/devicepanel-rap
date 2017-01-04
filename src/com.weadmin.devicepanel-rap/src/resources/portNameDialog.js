@@ -12,6 +12,7 @@
       this.uniqueId = options.uniqueId;
       this.dialogJq = null;
       this.mousedownEle = null;
+      this.canMoveDialog = false;
       this.portNameList = ["portName_1","portName_2","portName_3","portName_4","portName_5","portName_6","portName_7","portName_8","portName_9","portName_10"
         ,"portName_11","portName_12","portName_13","portName_14","portName_15","portName_16","portName_17","portName_18","portName_19","portName_10"
         ];
@@ -20,11 +21,14 @@
       this.addEvent();
     },
     initElement:function(){
+      var _this = this;
       var ele = document.createElement( "div" );
       ele.setAttribute("id","portNameDialog_"+this.uniqueId);
       ele.setAttribute("class","portNameDialog menu");
       $(this.container).append( ele );
       this.dialogJq = $(ele);
+      this.dialogJq.append('<div class="dialogHeader"></div>');
+      // this.dialogJq.append('<div class="dialogCloseBtn">x</div>');
       var ulul = $("<ul></ul>");
       this.dialogJq.append(ulul);
 			for (var i = 0; i < this.portNameList.length; i++) {
@@ -34,14 +38,27 @@
         lia.append(aTag);
         aTag.css("cursor", "pointer").text(this.portNameList[i]);
 			}
+      setTimeout(function(){
+        _this.dialogJq.find('.dialogHeader').css({"cursor":"move","width":"100%","height":"20px"});
+      },10);
     },
     addEvent:function(){
       var _this = this;
-      var offsetPos = $(this.container).offset();
+      this.dialogJq.find(".dialogHeader").on('mousedown',function(evt){
+        _this.canMoveDialog = true;
+      });
+      this.dialogJq.find(".dialogHeader .dialogCloseBtn").on('click',function(evt){
+
+      });
       $(this.container).on('mousemove',function(evt){
+        var offsetPos = $(_this.container).offset();
         if(_this.mousedownEle){
           // console.log("mousemove event object:",evt);
-          _this.mousedownEle.css({"left":(evt.clientX-offsetPos.left+10)+"px","top":(evt.clientY-offsetPos.top+10)+"px"});
+          _this.mousedownEle.css({"left":(evt.clientX-offsetPos.left)+"px","top":(evt.clientY-offsetPos.top+10)+"px"});
+        }
+        if(_this.canMoveDialog){
+          // var pos = _this.dialogJq.position();
+          _this.dialogJq.css({"left":(evt.clientX-offsetPos.left-20)+"px","top":(evt.clientY-offsetPos.top-10)+"px"});
         }
       });
       this.dialogJq.find("a").on('mousedown',function(evt){
@@ -56,6 +73,7 @@
         console.log("mousedown portName:"+portName);
       });
       $(this.container).on('mouseup',function(evt){
+        console.log("mouseup event object:",evt);
         $(".mousedownBack").removeClass('mousedownBack');
         var portName = $(".mousedown"+_this.uniqueId).attr('data-portname');
         var portEle = $('.mouseover'+_this.uniqueId);
@@ -64,6 +82,7 @@
         }
         $(_this.container).find(".mousedown"+_this.uniqueId).remove();
         _this.mousedownEle = null;
+        _this.canMoveDialog = false;
       });
     },
     setPortName:function(portName,portEle){
