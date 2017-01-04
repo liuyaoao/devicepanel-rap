@@ -61,9 +61,13 @@ color:#000;
 .menu ul li a.mousedownBack{
   background: #757510;
 }
+
 .portNameDialog ul{
   overflow-y:scroll;
   height:200px;
+}
+.portNameDialog ul li a{
+  cursor: pointer;
 }
 .mousedownEle{
   position: absolute;
@@ -88,6 +92,9 @@ color:#000;
   border-radius: 3px 3px;
   /*width: 130px;*/
   /*overflow: auto;*/
+}
+.portNameDialog ul li a.nameUsed{
+  background: #70F13B;
 }
 .dialogHeader{
   cursor:move;

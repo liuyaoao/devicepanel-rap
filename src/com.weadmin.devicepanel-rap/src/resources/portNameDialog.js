@@ -70,6 +70,7 @@
         var portEle = $('.mouseover'+_this.uniqueId);
         if(portName && portEle.size()>0){
           _this.setPortName(portName,portEle);
+          _this.refreshNameState();
         }
         $(_this.container).find(".mousedown"+_this.uniqueId).remove();
         _this.mousedownEle = null;
@@ -77,6 +78,25 @@
       });
     },
     setPortName:function(portName,portEle){
+      var portNum = portEle.attr('data-portnum');
+      var oldPortEle = $(this.container).find("svg g[data-portname='"+portName+"']");
+      var oldPortNum = oldPortEle.attr('data-portnum');
+      if(portNum == oldPortNum ){
+        return;
+      }
+      //delete old
+      if(oldPortEle && oldPortEle.size>0){
+        oldPortEle.attr('data-portname',"");
+        var v_cpOldArr = oldPortEle[0].getElementsByTagName("v:cp");
+        for(var i=0;i<v_cpOldArr.length;i++){
+          var el = $(v_cpOldArr[i]);
+          var nameCn = el.attr('v:lbl') || "";
+          if(nameCn == "interfaceName"){
+            el.attr("v:val","");
+          }
+        }
+      }
+      //add new
       portEle.attr('data-portname', portName);
       var v_cpEleArr = portEle[0].getElementsByTagName("v:cp");
       for(var i=0;i<v_cpEleArr.length;i++){
@@ -92,15 +112,25 @@
       for (var i = 0; i < this.portNameList.length; i++) {
         var lia = $("<li></li>");
 				ulContainer.append(lia);
-        var aTag = $("<a href='javascript:;' data-index='"+i+"'></a>");
+        var aTag = $("<a href='javascript:;' data-portname='"+this.portNameList[i]+"'>"+this.portNameList[i]+"</a>");
         lia.append(aTag);
-        aTag.css("cursor", "pointer").text(this.portNameList[i]);
 			}
     },
     updateNameList:function(interfaceNameList){
       this.portNameList = interfaceNameList;
       this.dialogJq.find('ul').empty();
       this.addNameListToContainer(this.dialogJq.find('ul'));
+      this.refreshNameState();
+    },
+    refreshNameState:function(){
+      var _this = this;
+      var portGElArr = $(this.container).find("svg g[data-portname]");
+      $(this.container).find(".portNameDialog .nameUsed").removeClass("nameUsed");
+      portGElArr.each(function(){
+        var that = $(this);
+        var portName = that.attr("data-portname");
+        $(_this.container).find(".portNameDialog a[data-portname='"+portName+"']").addClass("nameUsed");
+      });
     },
     dispose:function(){
       $("#portNameDialog_"+this.uniqueId).off().remove();

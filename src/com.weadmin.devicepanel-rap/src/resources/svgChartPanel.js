@@ -206,7 +206,10 @@
     },
     //
     updateInterfaceName:function(interfaceNameList){
-      this.portNameDialog.updateNameList(interfaceNameList);
+      var _this = this;
+      setTimeout(function(){
+        _this.portNameDialog.updateNameList(interfaceNameList);
+      },100);
     },
     portBeSelected:function(eventName,portName){
       this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,portName]);
