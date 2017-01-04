@@ -47,13 +47,7 @@
 			element.style.overflow="auto";
 			// element.style.backgroundColor ="#7f707f";
 			$(element).addClass("svgContainer").html(this.svgTxt);
-      this.tooltipTitle = $(element).find("svg title:first").clone(); //clone first one title tag. because by jquery create not work.
-			$(element).find("svg title").remove();
-      this.svgJqObj = $(element).find("svg");
-      this.svgWidth = (this.svgJqObj.attr("width")).split("in")[0] *96; //unit 'in' to 'px' have to multiply by 100.
-      this.svgHeight = (this.svgJqObj.attr("height")).split("in")[0] *96;
       $(this.container).append( element );
-      // console.log("this.svgTxt------>:",this.svgTxt);
       //重新格式一下svg的结构，获取网线端口元素数组。
       setTimeout(function(){
         _this.formatSvgXml();
@@ -107,6 +101,11 @@
     formatSvgXml:function(){
       // because the minimum font in visio is normal, but transform to svg and show in web ,the font-size will become big.
       // because minimum font-size in web browser is 10px.
+      this.tooltipTitle = $(this.svgContainer).find("svg title:first").clone(); //clone first one title tag. because by jquery create not work.
+			$(this.svgContainer).find("svg title").remove();
+      this.svgJqObj = $(this.svgContainer).find("svg");
+      this.svgWidth = (this.svgJqObj.attr("width")).split("in")[0] *96; //unit 'in' to 'px' have to multiply by 100.
+      this.svgHeight = (this.svgJqObj.attr("height")).split("in")[0] *96;
       this.refreshSize(this.svgWidth, this.svgHeight);
 
       var v_cpEleArr = this.svgJqObj[0].getElementsByTagName("v:cp");
