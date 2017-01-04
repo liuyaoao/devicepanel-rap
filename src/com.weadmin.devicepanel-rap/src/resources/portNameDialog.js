@@ -67,10 +67,10 @@
         _this.mousedownEle.addClass("mousedownEle");
         $(_this.container).append( _this.mousedownEle );
         // _this.mousedownEle.css({"position":"absolute","left":evt.clientX+"px","top":evt.clienY+"px"});
-        console.log("mousedown portName:"+portName);
+        // console.log("mousedown portName:"+portName);
       });
       $(this.container).on('mouseup',function(evt){
-        console.log("mouseup event object:",evt);
+        // console.log("mouseup event object:",evt);
         $(".mousedownBack").removeClass('mousedownBack');
         var portName = $(".mousedown"+_this.uniqueId).attr('data-portname');
         var portEle = $('.mouseover'+_this.uniqueId);
@@ -93,6 +93,10 @@
           console.log("setPortName succ:"+portName);
         }
       }
+    },
+    updateNameList:function(interfaceNameList){
+      this.portNameList = interfaceNameList;
+      //TODO
     },
     dispose:function(){
       $("#portNameDialog_"+this.uniqueId).off().remove();

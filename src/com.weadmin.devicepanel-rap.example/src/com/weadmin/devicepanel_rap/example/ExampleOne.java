@@ -1,13 +1,5 @@
 package com.weadmin.devicepanel_rap.example;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 import org.eclipse.rap.json.JsonObject;
@@ -21,8 +13,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
-import com.alibaba.fastjson.JSONObject;
 import com.weadmin.devicepanel_rap.DevicePanelSvg;
 
 public class ExampleOne extends AbstractEntryPoint{
@@ -46,17 +39,34 @@ public class ExampleOne extends AbstractEntryPoint{
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
 		String sysObjId = "svg07"; //svg file name.
-		deviceSvg.setStatuss(createStatusMap(50));
-		deviceSvg.setTooltipdata(createTooltipMap(50));
 		deviceSvg.addOneSvgPanelById(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
-		//add number 2 svg panel
-//		DevicePanelSvg deviceSvg2 = new DevicePanelSvg(parent, SWT.NONE);
-//		String sysObjId2 = "svg01"; //svg file name.
-//		deviceSvg2.setStatuss(createStatusMap(50));
-//		deviceSvg2.setTooltipdata(createTooltipMap(50));
-//		deviceSvg2.addOneSvgPanelById(sysObjId2);
-//		deviceSvg2.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		deviceSvg.addListener(SWT.Selection, new Listener() {
+			private static final long serialVersionUID = 1L;
+			public void handleEvent(Event event) {
+				String eventag = event.text;
+//				System.out.println(portindex);
+				if (eventag.equals("openport")) {
+//					MsgBox.ShowError("打开端口！");
+				} else if (eventag.equals("deviceip")) {
+//					MsgBox.ShowError("查看端口连接的设备！");
+				}else if(eventag.toLowerCase().equals("portport")){
+					System.out.println("点击了端口！");
+				}else if(eventag.toLowerCase().equals("svg_initialized")){
+					System.out.println("svg_initialized");
+					deviceSvg.setStatuss(createStatusMap(50));
+					deviceSvg.setTooltipdata(createTooltipMap(50));
+				}
+			}
+		});
+
+		parent.getDisplay().timerExec(4000, new Runnable() { //refresh data after 2s later.
+			public void run() {
+				deviceSvg.setStatuss(createStatusMap(50));
+				deviceSvg.setTooltipdata(createTooltipMap(50));
+			}
+		});
 
 
 		button.addSelectionListener(new SelectionAdapter() {

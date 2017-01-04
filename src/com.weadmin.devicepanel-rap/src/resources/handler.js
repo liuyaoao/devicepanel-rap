@@ -69,6 +69,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					container:this.element,
 					uniqueId:this._uniqueId,
 					menuPanel:this.menuPanel,
+					portNameDialog:this.portNameDialog,
 					svgTxt:this._svgTxt,
 					statusMap:this._statussMap,
 					tooltipDataMap:this._tooltipDataMap,
@@ -80,9 +81,9 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				this.getSizeFromSvg();
 				this.svgInitializedCall();
 				// console.log("this._svgSize:----",this._svgSize);
-				setTimeout(function(){
-					_this.refreshAll();
-				}, 100);
+				// setTimeout(function(){
+				// 	_this.refreshAll();
+				// }, 100);
 				setTimeout(function(){ _this.updateContainerSize(); }, 200);
 				rap.getRemoteObject( this ).set( "svgSize", JSON.stringify(this._svgSize));
 				rap.on("send", this.onSend);
@@ -108,18 +109,21 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		setMenudesc : function (menudesc) {
 			this._menudesc = menudesc;
 		},
-		setInterfaceNameList : function (interfaceNameList) {
-			this._interfaceNameList = interfaceNameList;
-		},
 		getMenudesc : function () {
 			return this._menudesc;
+		},
+		setInterfaceNameList : function (interfaceNameList) {
+			this._interfaceNameList = interfaceNameList;
+			this.svgChartPanel && this.svgChartPanel.updateInterfaceName(this._interfaceNameList);
 		},
 		setStatuss : function (statuss) {
 			// console.log('statusMap:',statuss);
 			this._statussMap = statuss;
+			this.svgChartPanel && this.svgChartPanel.updateStatus(this._statussMap);
 		},
 		setTooltipdata : function (tooltipdata) {
 			this._tooltipDataMap = tooltipdata;
+			this.svgChartPanel && this.svgChartPanel.updateTooltip(this._tooltipDataMap);
 		},
 		setSvgSize:function(svgSize){
 			this._svgSize = svgSize || "";
@@ -136,8 +140,11 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		refreshAll:function(){ //更新所有显示。状态和提示。
 			// console.log('refreshAll!!!!!!!!!!');
-			this.svgChartPanel.updateStatus(this._statussMap);
-			this.svgChartPanel.updateTooltip(this._tooltipDataMap);
+			var _this = this;
+			setTimeout(function(){
+				_this.svgChartPanel.updateStatus(_this._statussMap);
+				_this.svgChartPanel.updateTooltip(_this._tooltipDataMap);
+			},10);
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid,也即端口名（接口名）
 		portBeSelected : function (eventName, svid) {
