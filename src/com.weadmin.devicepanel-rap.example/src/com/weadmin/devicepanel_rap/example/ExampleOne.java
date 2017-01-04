@@ -45,7 +45,7 @@ public class ExampleOne extends AbstractEntryPoint{
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysObjId = "svg01"; //svg file name.
+		String sysObjId = "svg07"; //svg file name.
 		deviceSvg.setStatuss(createStatusMap(50));
 		deviceSvg.setTooltipdata(createTooltipMap(50));
 		deviceSvg.addOneSvgPanelById(sysObjId);
@@ -112,7 +112,7 @@ public class ExampleOne extends AbstractEntryPoint{
 	private JsonObject createStatusMap(int num){
 		JsonObject statusMap = new JsonObject();
 		for(int i=0;i<num;i++){
-			statusMap.set("portName_"+(i+1), getRangeRandomNum(0,5)); //键值为端口名称，也就是接口名。
+			statusMap.set("Ethernet0/"+(i+1), getRangeRandomNum(0,5)); //键值为端口名称，也就是接口名。
 		}
 		return statusMap;
 	}
@@ -126,7 +126,7 @@ public class ExampleOne extends AbstractEntryPoint{
 	private JsonObject createTooltipMap(int num){
 		JsonObject tooltipMap = new JsonObject();
 		for(int i=0;i<num;i++){ //键值为端口名称，也就是接口名。
-			tooltipMap.set("portName_"+(i+1), "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9");
+			tooltipMap.set("Ethernet0/"+(i+1), "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9");
 		}
 		return tooltipMap;
 	}

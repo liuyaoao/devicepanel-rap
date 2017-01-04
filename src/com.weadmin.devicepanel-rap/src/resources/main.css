@@ -84,9 +84,14 @@ color:#000;
   position:absolute;
   top: 0;
   right: 0;
-  height: 200px;
-  border:1px solid ##AECC33;
+  background: #BDBDC3;
+  border:1px solid #AECC33;
   border-radius: 3px 3px;
   /*width: 130px;*/
   /*overflow: auto;*/
+}
+.dialogHeader{
+  cursor:move;
+  width:100%;
+  height:40px;
 }

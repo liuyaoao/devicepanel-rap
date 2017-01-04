@@ -38,9 +38,6 @@
         lia.append(aTag);
         aTag.css("cursor", "pointer").text(this.portNameList[i]);
 			}
-      setTimeout(function(){
-        _this.dialogJq.find('.dialogHeader').css({"cursor":"move","width":"100%","height":"20px"});
-      },10);
     },
     addEvent:function(){
       var _this = this;
