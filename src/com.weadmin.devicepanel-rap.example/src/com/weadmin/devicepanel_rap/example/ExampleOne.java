@@ -65,6 +65,7 @@ public class ExampleOne extends AbstractEntryPoint{
 			public void run() {
 				deviceSvg.setStatuss(createStatusMap(50));
 				deviceSvg.setTooltipdata(createTooltipMap(50));
+				deviceSvg.setInterfaceNameList(createInterfaceNameArr(50));
 			}
 		});
 
@@ -112,13 +113,6 @@ public class ExampleOne extends AbstractEntryPoint{
 		String s = (i<10?"0"+i:i+"");
 		return s;
 	}
-	private int[] createStatusArr(int num){
-		int[] statusArr = new int[num];
-		for(int i=0;i<num;i++){
-			statusArr[i] = getRangeRandomNum(0,5);
-		}
-		return statusArr;
-	}
 	private JsonObject createStatusMap(int num){
 		JsonObject statusMap = new JsonObject();
 		for(int i=0;i<num;i++){
@@ -126,19 +120,19 @@ public class ExampleOne extends AbstractEntryPoint{
 		}
 		return statusMap;
 	}
-	private String[] createTooltipArr(int num){
-		String[] tooltipArr = new String[num];
-		for(int i=0;i<num;i++){
-			tooltipArr[i] = "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9";
-		}
-		return tooltipArr;
-	}
 	private JsonObject createTooltipMap(int num){
 		JsonObject tooltipMap = new JsonObject();
 		for(int i=0;i<num;i++){ //键值为端口名称，也就是接口名。
 			tooltipMap.set("Ethernet0/"+(i+1), "端口信息<br>端口类型：p1<br>端口索引：p2<br>端口描述：p3<br>接口索引：p4<br>端口状态：p5<br>管理状态：p6<br>接收流量：p7<br>发送流量：p8<br>速率   ：p9");
 		}
 		return tooltipMap;
+	}
+	private String[] createInterfaceNameArr(int num){
+		String[] nameArr = new String[num];
+		for(int i=0;i<num;i++){
+			nameArr[i] = "Ethernet0/"+(i+1);
+		}
+		return nameArr;
 	}
 	private int getRangeRandomNum(int min, int max){
 		return (new Random().nextInt(max - min) + min);

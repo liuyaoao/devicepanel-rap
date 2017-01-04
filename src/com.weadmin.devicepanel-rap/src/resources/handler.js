@@ -80,7 +80,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				});
 				this.getSizeFromSvg();
 				this.svgInitializedCall();
-				// console.log("this._svgSize:----",this._svgSize);
 				// setTimeout(function(){
 				// 	_this.refreshAll();
 				// }, 100);
@@ -92,7 +91,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 
 		destroy : function () {
-			// this._svgMap && this._svgMap.destroy();
 			rap.off("send", this.onSend);
 			this.menuPanel && this.menuPanel.dispose();
 			this.svgChartPanel && this.svgChartPanel.dispose();
@@ -117,7 +115,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			this.svgChartPanel && this.svgChartPanel.updateInterfaceName(this._interfaceNameList);
 		},
 		setStatuss : function (statuss) {
-			// console.log('statusMap:',statuss);
 			this._statussMap = statuss;
 			this.svgChartPanel && this.svgChartPanel.updateStatus(this._statussMap);
 		},
@@ -198,22 +195,18 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				$(this.element).height($(this.element.parentNode).height());
 			}
 		}
-
 	};
-
 	var bind = function(context, method) {
 		return function() {
 			return method.apply(context, arguments);
 		};
 	};
-
 	var bindAll = function(context, methodNames) {
 		for (var i = 0; i < methodNames.length; i++) {
 			var method = context[methodNames[i]];
 			context[methodNames[i]] = bind(context, method);
 		}
 	};
-
 	var async = function(context, func) {
 		window.setTimeout(function() {
 			func.apply(context);

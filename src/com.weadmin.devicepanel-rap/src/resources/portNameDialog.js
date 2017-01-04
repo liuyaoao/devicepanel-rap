@@ -31,13 +31,7 @@
       // this.dialogJq.append('<div class="dialogCloseBtn">x</div>');
       var ulul = $("<ul></ul>");
       this.dialogJq.append(ulul);
-			for (var i = 0; i < this.portNameList.length; i++) {
-        var lia = $("<li></li>");
-				ulul.append(lia);
-        var aTag = $("<a href='javascript:;' data-index='"+i+"'></a>");
-        lia.append(aTag);
-        aTag.css("cursor", "pointer").text(this.portNameList[i]);
-			}
+			this.addNameListToContainer(ulul);
     },
     addEvent:function(){
       var _this = this;
@@ -58,7 +52,7 @@
           _this.dialogJq.css({"left":(evt.clientX-offsetPos.left-20)+"px","top":(evt.clientY-offsetPos.top-10)+"px"});
         }
       });
-      this.dialogJq.find("a").on('mousedown',function(evt){
+      this.dialogJq.find("ul").on('mousedown','li a',function(evt){
         $(this).addClass('mousedownBack');
         var portName = $.trim($(this).text());
         _this.mousedownEle = $(this).clone();
@@ -94,9 +88,19 @@
         }
       }
     },
+    addNameListToContainer:function(ulContainer){
+      for (var i = 0; i < this.portNameList.length; i++) {
+        var lia = $("<li></li>");
+				ulContainer.append(lia);
+        var aTag = $("<a href='javascript:;' data-index='"+i+"'></a>");
+        lia.append(aTag);
+        aTag.css("cursor", "pointer").text(this.portNameList[i]);
+			}
+    },
     updateNameList:function(interfaceNameList){
       this.portNameList = interfaceNameList;
-      //TODO
+      this.dialogJq.find('ul').empty();
+      this.addNameListToContainer(this.dialogJq.find('ul'));
     },
     dispose:function(){
       $("#portNameDialog_"+this.uniqueId).off().remove();
