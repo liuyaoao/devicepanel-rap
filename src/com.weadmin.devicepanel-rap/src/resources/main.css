@@ -58,17 +58,7 @@ color:#000;
 background:#dfc184;
 color:#000;
 }
-.menu ul li a.mousedownBack{
-  background: #757510;
-}
 
-.portNameDialog ul{
-  overflow-y:scroll;
-  height:200px;
-}
-.portNameDialog ul li a{
-  cursor: pointer;
-}
 .mousedownEle{
   position: absolute;
   z-index: 999999;
@@ -93,11 +83,30 @@ color:#000;
   /*width: 130px;*/
   /*overflow: auto;*/
 }
+.portNameDialog ul{
+  overflow-y:scroll;
+  height:200px;
+  /*margin-top: 40px;*/
+}
+.portNameDialog ul li a{
+  cursor: pointer;
+}
 .portNameDialog ul li a.nameUsed{
   background: #70F13B;
 }
+.portNameDialog ul li a.mousedownBack{
+  background: #757510;
+}
 .dialogHeader{
   cursor:move;
+  position: relative;
   width:100%;
+  min-width:100px;
   height:40px;
+}
+.showIn_Out{
+  position: absolute;
+    right: 0;
+    top: 10px;
+    cursor: pointer;
 }

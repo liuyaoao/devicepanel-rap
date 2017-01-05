@@ -28,6 +28,7 @@
       $(this.container).append( ele );
       this.dialogJq = $(ele);
       this.dialogJq.append('<div class="dialogHeader"></div>');
+      this.dialogJq.append('<div class="showIn_Out">收起</div>');
       // this.dialogJq.append('<div class="dialogCloseBtn">x</div>');
       var ulul = $("<ul></ul>");
       this.dialogJq.append(ulul);
@@ -48,7 +49,6 @@
           _this.mousedownEle.css({"left":(evt.clientX-offsetPos.left)+"px","top":(evt.clientY-offsetPos.top+10)+"px"});
         }
         if(_this.canMoveDialog){
-          // var pos = _this.dialogJq.position();
           _this.dialogJq.css({"left":(evt.clientX-offsetPos.left-20)+"px","top":(evt.clientY-offsetPos.top-10)+"px"});
         }
       });
@@ -65,27 +65,50 @@
       });
       $(this.container).on('mouseup',function(evt){
         // console.log("mouseup event object:",evt);
-        $(".mousedownBack").removeClass('mousedownBack');
         var portName = $(".mousedown"+_this.uniqueId).attr('data-portname');
         var portEle = $('.mouseover'+_this.uniqueId);
         if(portName && portEle.size()>0){
-          _this.setPortName(portName,portEle);
-          _this.refreshNameState();
+          var changePortArr = _this.setPortName(portName,portEle);
+          changePortArr.length>0 ? _this.refreshNameState() : null;
+          changePortArr.length>0 ? $(_this.container).trigger("customEvt.portChanged",changePortArr) : null;
         }
-        $(_this.container).find(".mousedown"+_this.uniqueId).remove();
-        _this.mousedownEle = null;
-        _this.canMoveDialog = false;
+        _this.mouseUpDispose();
+      });
+      $(this.container).on('mouseleave',function(evt){
+        _this.mouseUpDispose();
+      });
+      $(this.container).find('.portNameDialog').on('click','.showIn_Out',function(evt){
+        var that = $(this);
+        var parent = that.closest(".portNameDialog");
+        if(that.text() =="收起"){
+          parent.find("ul").slideUp();
+          that.text("展示");
+        }else{
+          parent.find("ul").slideDown();
+          that.text("收起");
+        }
       });
     },
+    mouseUpDispose:function(){ //当鼠标弹起或这移出了最外层容器的时候。
+      var _this = this;
+      $(".mousedownBack").removeClass('mousedownBack');
+      $(_this.container).find(".mousedown"+_this.uniqueId).remove();
+      _this.mousedownEle = null;
+      _this.canMoveDialog = false;
+    },
+    // 绑定接口名到某个端口位置。返回所改变的端口的索引好和接口名数组。[oldPortNum,oldPortName,newPortNum,newPortName]
     setPortName:function(portName,portEle){
+      var changePortArr = [];
       var portNum = portEle.attr('data-portnum');
       var oldPortEle = $(this.container).find("svg g[data-portname='"+portName+"']");
       var oldPortNum = oldPortEle.attr('data-portnum');
+      var oldPortName = portEle.attr('data-portname');
       if(portNum == oldPortNum ){
-        return;
+        return changePortArr;
       }
       //delete old
-      if(oldPortEle && oldPortEle.size>0){
+      changePortArr = [oldPortNum,oldPortName,portNum,portName];
+      if(oldPortEle && oldPortEle.size()>0){ //如果选定的该接口名已经绑定了某个端口位置了。则要在旧的端口先去掉绑定。
         oldPortEle.attr('data-portname',"");
         var v_cpOldArr = oldPortEle[0].getElementsByTagName("v:cp");
         for(var i=0;i<v_cpOldArr.length;i++){
@@ -107,6 +130,7 @@
           console.log("setPortName succ:"+portName);
         }
       }
+      return changePortArr;
     },
     addNameListToContainer:function(ulContainer){
       for (var i = 0; i < this.portNameList.length; i++) {
@@ -122,7 +146,7 @@
       this.addNameListToContainer(this.dialogJq.find('ul'));
       this.refreshNameState();
     },
-    refreshNameState:function(){
+    refreshNameState:function(){ //更新接口名列表的状态，标识哪些已经绑定了端口。
       var _this = this;
       var portGElArr = $(this.container).find("svg g[data-portname]");
       $(this.container).find(".portNameDialog .nameUsed").removeClass("nameUsed");

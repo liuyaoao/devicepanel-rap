@@ -74,6 +74,9 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					statusMap:this._statussMap,
 					tooltipDataMap:this._tooltipDataMap,
 					interfaceNameList:this._interfaceNameList,
+					getModifiedSvgTxtCall:function(svgtxt){
+						_this.getModifiedSvgTxt(svgtxt);
+					},
 					portBeSelectedCall:function(eventName,svid){
 						_this.portBeSelected(eventName,svid);
 					}
@@ -128,8 +131,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		setSvgTxt:function(svgTxt){
 			this._svgTxt = svgTxt || "";
 		},
-		getModifiedSvgTxt:function(){
-			this._svgTxt = this.svgChartPanel.getModifiedSvgTxt();
+		getModifiedSvgTxt:function(svgtxt){
+			this._svgTxt = svgtxt;//this.svgChartPanel.getModifiedSvgTxt();
 			rap.getRemoteObject( this ).set( "svgTxt", this._svgTxt);
 		},
 		getSizeFromSvg:function(){

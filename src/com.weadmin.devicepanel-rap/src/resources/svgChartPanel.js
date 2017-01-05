@@ -14,6 +14,7 @@
       this.uniqueId = options.uniqueId;
       this.svgTxt = options.svgTxt || '';
       this.portBeSelectedCall = options.portBeSelectedCall;
+      this.getModifiedSvgTxtCall = options.getModifiedSvgTxtCall;
       this.statusMap = options.statusMap || {};
       this.tooltipDataMap = options.tooltipDataMap || {};
       this.interfaceNameList = options.interfaceNameList || [];
@@ -31,7 +32,7 @@
       this.blinkFlag = 0; //
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
-      this.noNeedBlinkstatusMap = [0,4,5];
+      this.noNeedBlinkstatusMap = [0]; //不需要闪烁的状态值列表。
       // 默认：黑色， 0：深灰色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
       this.statusColorMap = {"":"#080808", 0:"#080808", 1:"#19E807", 2:"#FFF20B", 3:"#FF1411", 4:"#2813E8", 5:"#FF6600"};
       this.strokeColorMap = {"":"#8819E8", 0:"#FF1411", 1:"#FF11FF", 2:"#9011FF", 3:"#3B12E8", 4:"#FF5C08", 5:"#00FFDC"};
@@ -103,6 +104,18 @@
           },50);
   			});
       }
+      $(this.container).on('customEvt.portChanged',function(evt,oldNum,oldName,newNum,newName){
+        console.log("端口绑定有改变。。。。。oldNum:"+oldNum+","+oldName+","+newNum+","+newName);
+        _this.portNum2InterfaceNameMap[oldNum+""] = "";
+        _this.portNum2InterfaceNameMap[newNum+""] = newName;
+        _this.interfaceName2portNumMap[oldName] = "";
+        _this.interfaceName2portNumMap[newName] = newNum;
+        $(_this.container).find("svg g[data-portnum]").find("path").css("fill","black");
+        _this.updateStatus();
+        _this.updateTooltip();
+        _this.svgTxt = _this.svgContainer.innerHTML;
+        _this.getModifiedSvgTxtCall.apply(null,[_this.svgTxt]);
+      });
     },
     formatSvgXml:function(){
       // because the minimum font in visio is normal, but transform to svg and show in web ,the font-size will become big.
@@ -182,27 +195,33 @@
     },
     // 更新端口状态
     updateStatus : function (statusMap) {
-      this.statusMap = statusMap;
-      for(var portName in statusMap){
-        var value = statusMap[portName] || '';
+      statusMap ? (this.statusMap = statusMap) : null;
+      for(var portName in this.statusMap){
+        var value = this.statusMap[portName] || '';
         var portNum = this.interfaceName2portNumMap[portName] ||'';
         var portEl = this.portJqEleMap[portNum];
         var portLightEl = this.portLightJqElMap[portNum];
         var colorValue = this.statusColorMap[value];
         portEl && portEl.find('path').css('fill',colorValue);
         portLightEl && portLightEl.find('path').css('fill',colorValue);
+        portLightEl && portLightEl.find('ellipse').css('fill',colorValue);
       }
       this.updatePortPathStrokeColor();
+      // console.log("portNum2InterfaceNameMap:",this.portNum2InterfaceNameMap);
+      // console.log("interfaceName2portNumMap:",this.interfaceName2portNumMap);
 		},
     // 更新端口的鼠标悬停提示面板
     updateTooltip:function(tooltipDataMap){
-      this.tooltipDataMap = tooltipDataMap;
-      for(var portName in tooltipDataMap){
-        var tooltipStr = tooltipDataMap[portName] || '';
+      tooltipDataMap ? (this.tooltipDataMap = tooltipDataMap) : null;
+      for(var portName in this.tooltipDataMap){
+        var tooltipStr = this.tooltipDataMap[portName] || '';
         var portNum = this.interfaceName2portNumMap[portName] ||'';
         var jqTitle = this.portTipTitleJqMap[portNum];
         jqTitle && jqTitle.text(tooltipStr.replace(/<br>/g,'\n'));
       }
+    },
+    setOnePortStatus:function(){
+
     },
     //
     updateInterfaceName:function(interfaceNameList){
@@ -224,8 +243,9 @@
       this.svgJqObj.closest("div").css("transform","scale(0.5,0.5) translate(-50%,-50%)");
     },
     updatePortPathStrokeColor:function(){
-      for(var key in this.portJqEleMap){
-        this.portJqEleMap[key].find("path").css("stroke",this.strokeColorMap[this.statusMap[key]||""]);
+      for(var portNum in this.portJqEleMap){
+        var portName = this.portNum2InterfaceNameMap[portNum];
+        this.portJqEleMap[portNum].find("path").css("stroke",this.strokeColorMap[this.statusMap[portName]||""]);
       }
     },
     updatePortNum2InterfaceMap:function(parentG_jq){
@@ -243,10 +263,6 @@
       }
       this.portNum2InterfaceNameMap[portNum] = interfaceName;
       this.interfaceName2portNumMap[interfaceName] = portNum;
-    },
-    getModifiedSvgTxt:function(){
-      this.svgTxt = this.svgContainer.innerHTML;
-      return this.svgTxt;
     },
     getValueFromStr:function(str){
       var start = str.indexOf('(');

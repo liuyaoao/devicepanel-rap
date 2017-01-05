@@ -103,7 +103,8 @@ public class ExampleOne extends AbstractEntryPoint{
 		saveModifiedSvgBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				deviceSvg.rewriteSvgFile();
+				String svgTxt = deviceSvg.getNewSvgTxt();
+				System.out.println("modified svgtxt:"+svgTxt);
 			}
 		});
 	}

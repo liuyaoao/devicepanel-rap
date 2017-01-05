@@ -157,11 +157,10 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.interfaceNameList = list;
 		remoteObject.set( "interfaceNameList", jsonArray(list) );
 	}
-	public void rewriteSvgFile(){
-		super.callRemoteMethod("getModifiedSvgTxt", JsonObject.readFrom("{}"));
-		System.out.println("modified svgtxt:"+this.svgTxt);
+	public String getNewSvgTxt(){
+//		super.callRemoteMethod("getModifiedSvgTxt", JsonObject.readFrom("{}"));
 		String wholeTxt = this.svgTxtPrefix + this.svgTxt;
-		// TODO
+		return wholeTxt;
 	}
 
 // ==================================
