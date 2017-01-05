@@ -19,6 +19,7 @@
       this.tooltipDataMap = options.tooltipDataMap || {};
       this.interfaceNameList = options.interfaceNameList || [];
       this.svgContainer = null;
+      this.noUseSvgContainer = null; //没放在页面使用的svg容器，用于重新读取写回svg文件。
       this.tooltipTitle = null;
       this.svgJqObj = null; //svg的jquery对象
       this.portJqEleMap = {}; //端口号的jquery对象map
@@ -55,6 +56,7 @@
       this.svgWidth = (this.svgJqObj.attr("width")).split("in")[0] *96; //unit 'in' to 'px' have to multiply by 100.
       this.svgHeight = (this.svgJqObj.attr("height")).split("in")[0] *96;
       $(this.container).append( element );
+      this.createNoUseSvg();
       //重新格式一下svg的结构，获取网线端口元素数组。
       setTimeout(function(){
         _this.formatSvgXml();
@@ -113,9 +115,35 @@
         $(_this.container).find("svg g[data-portnum]").find("path").css("fill","black");
         _this.updateStatus();
         _this.updateTooltip();
-        _this.svgTxt = _this.svgContainer.innerHTML;
+        _this.refreshNoUseSvg();
+        _this.svgTxt = $(_this.noUseSvgContainer).html();
         _this.getModifiedSvgTxtCall.apply(null,[_this.svgTxt]);
       });
+    },
+    createNoUseSvg:function(){
+      this.noUseSvgContainer = document.createElement( "div" );
+      $(this.noUseSvgContainer).html(this.svgTxt);
+    },
+    refreshNoUseSvg:function(){
+      var v_cpEleArr = $(this.noUseSvgContainer).find("svg")[0].getElementsByTagName("v:cp");
+      for(var i=0;i<v_cpEleArr.length;i++){
+        var el = $(v_cpEleArr[i]);
+        var parentG_jq = el.closest('g');
+        var nameCn = el.attr('v:lbl') || "";
+        var valueStr = el.attr('v:val');
+        var portNum = this.getValueFromStr(valueStr||"");
+        if(nameCn == '端口号' || nameCn == 'portNum'){
+          var gvcpElArr = parentG_jq[0].getElementsByTagName("v:cp");
+          for(var k=0;k<gvcpElArr.length;k++){
+            var name = $(gvcpElArr[k]).attr('v:lbl') || "";
+            var newPortName = this.portNum2InterfaceNameMap[portNum+""] || "";
+            var portName = this.getValueFromStr($(gvcpElArr[k]).attr('v:val')||'');
+            if(name == "interfaceName" && portName != newPortName){
+              $(gvcpElArr[k]).attr('v:val','VT4('+newPortName+')');
+            }
+          }
+        }
+      }
     },
     formatSvgXml:function(){
       // because the minimum font in visio is normal, but transform to svg and show in web ,the font-size will become big.
@@ -135,7 +163,7 @@
           this.portJqEleMap[key+""] = parentG_jq;
           parentG_jq.css("cursor","pointer");
           parentG_jq.attr("data-portnum", key).find("path").css("stroke", "#fff").css("stroke-width", "0");
-        }if(nameCn == 'interfaceName'){
+        }else if(nameCn == 'interfaceName'){
           parentG_jq.attr("data-portname", key);
           this.updatePortNum2InterfaceMap(parentG_jq);
         }else if(nameCn == '端口灯号' || nameCn == 'portLightNum'){
@@ -219,9 +247,6 @@
         var jqTitle = this.portTipTitleJqMap[portNum];
         jqTitle && jqTitle.text(tooltipStr.replace(/<br>/g,'\n'));
       }
-    },
-    setOnePortStatus:function(){
-
     },
     //
     updateInterfaceName:function(interfaceNameList){
