@@ -6,4 +6,5 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: WEADMIN
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.weadmin.devicepanel-rap;bundle-version="1.0.0",
- org.eclipse.rap.ui;bundle-version="3.1.0"
+ org.eclipse.rap.ui;bundle-version="3.1.0",
+ org.apache.commons.io;bundle-version="2.2.0"

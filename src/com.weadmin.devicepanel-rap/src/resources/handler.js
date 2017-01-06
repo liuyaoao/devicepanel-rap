@@ -61,15 +61,10 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 						_this.clickMenuCall(eventName,svid);
 					}
 				});
-				this.portNameDialog = new svgdevicepanel.PortNameDialog({
-					container:this.element,
-					uniqueId:this._uniqueId
-				});
 				this.svgChartPanel = new svgdevicepanel.SvgChartPanel({
 					container:this.element,
 					uniqueId:this._uniqueId,
 					menuPanel:this.menuPanel,
-					portNameDialog:this.portNameDialog,
 					svgTxt:this._svgTxt,
 					statusMap:this._statussMap,
 					tooltipDataMap:this._tooltipDataMap,

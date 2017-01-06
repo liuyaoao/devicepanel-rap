@@ -89,24 +89,59 @@ color:#000;
   /*margin-top: 40px;*/
 }
 .portNameDialog ul li a{
+  background: #EAE6E6;
   cursor: pointer;
 }
 .portNameDialog ul li a.nameUsed{
-  background: #70F13B;
+  background: #8AD082;
 }
 .portNameDialog ul li a.mousedownBack{
-  background: #757510;
+  background: #7B807B;
+}
+.portNameDialog ul li a:hover,.portNameDialog ul li a.nameUsed:hover {
+background:#C1B8B8;
+color:#000;
+}
+.portNameList{
+  height:200px;
 }
 .dialogHeader{
   cursor:move;
   position: relative;
   width:100%;
   min-width:100px;
-  height:40px;
+  height:30px;
 }
 .showIn_Out{
   position: absolute;
+  height:30px;
+  width:18px;
+  border-left:1px solid #7B807B;
+  line-height: 30px;
+  background: #716D6D;
     right: 0;
-    top: 10px;
+    top: 0;
     cursor: pointer;
+}
+.triangleUp {
+    position: relative;
+    top: 10px;
+    left: 4px;
+    width: 0;
+    height: 0;
+    line-height: 30px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #333333;
+}
+.triangleDown {
+    position: relative;
+    top: 10px;
+    left: 4px;
+    width: 0;
+    height: 0;
+    line-height: 30px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 10px solid #333333;
 }

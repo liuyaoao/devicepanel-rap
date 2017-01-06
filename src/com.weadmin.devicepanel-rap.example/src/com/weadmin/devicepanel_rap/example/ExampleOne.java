@@ -1,7 +1,10 @@
 package com.weadmin.devicepanel_rap.example;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.rap.json.JsonObject;
 import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
@@ -38,7 +41,7 @@ public class ExampleOne extends AbstractEntryPoint{
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysObjId = "svg07"; //svg file name.
+		String sysObjId = "svg01"; //svg file name.
 		deviceSvg.addOneSvgPanelById(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -104,7 +107,13 @@ public class ExampleOne extends AbstractEntryPoint{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String svgTxt = deviceSvg.getNewSvgTxt();
-				System.out.println("modified svgtxt:"+svgTxt);
+				try {
+					FileUtils.writeStringToFile(new File("D:/liuyaoao/132.txt"), svgTxt,"utf-8");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+//				System.out.println("modified svgtxt:"+svgTxt);
 			}
 		});
 	}
