@@ -41,7 +41,7 @@ public class ExampleOne extends AbstractEntryPoint{
 
 		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
-		String sysObjId = "svg01"; //svg file name.
+		String sysObjId = "svg07"; //svg file name.
 		deviceSvg.addOneSvgPanelById(sysObjId);
 		deviceSvg.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -60,6 +60,9 @@ public class ExampleOne extends AbstractEntryPoint{
 					System.out.println("svg_initialized");
 					deviceSvg.setStatuss(createStatusMap(50));
 					deviceSvg.setTooltipdata(createTooltipMap(50));
+				}else if(eventag.toLowerCase().equals("svgtxtchanged")){
+					System.out.println("svgtxtchanged....");
+					System.out.println("svgtxtchanged,data:"+event.data);
 				}
 			}
 		});

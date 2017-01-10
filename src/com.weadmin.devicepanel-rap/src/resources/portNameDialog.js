@@ -146,7 +146,7 @@
         var nameCn = el.attr('v:lbl') || "";
         if(nameCn == "interfaceName"){
           el.attr("v:val","VT4("+portName+")");
-          console.log("setPortName succ:"+portName);
+          // console.log("setPortName succ:"+portName);
         }
       }
       return changePortArr;

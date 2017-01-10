@@ -219,6 +219,7 @@ public class DevicePanelSvg extends SVWidgetBase {
     }
 		if( svgtxt != null ) {
 			this.svgTxt = svgtxt.asString();
+			// System.out.println("svgTxtChanged!!!");
 		}
 	}
 
@@ -233,8 +234,10 @@ public class DevicePanelSvg extends SVWidgetBase {
 			Event event = new Event();
 			event.text = parameters.get("index").asString();
 			event.data =  parameters.get("data");
+			if(event.text.toLowerCase().equals("svgtxtchanged")){
+				event.data = this.svgTxtPrefix + parameters.get("data").asString();
+			}
 			notifyListeners(SWT.Selection, event);
-//			notifyListeners(SWT.INI, event);
 		}
 	}
 
@@ -242,7 +245,6 @@ public class DevicePanelSvg extends SVWidgetBase {
 	protected String getWidgetName() {
 		return "devicepanelsvgjs";
 	}
-
 	@Override
 	protected ArrayList<CustomRes> getCustomRes() {
 		ArrayList<CustomRes> res = new ArrayList<>();

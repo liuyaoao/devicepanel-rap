@@ -68,7 +68,7 @@
         _this.createToolTip();
         _this.createIntervalTimer();
         _this.addEvent();
-        console.log("init completed!!");
+        // console.log("init completed!!");
       },10);
     },
     addEvent:function(){
@@ -112,7 +112,7 @@
   			});
       }
       $(this.container).on('customEvt.portChanged',function(evt,oldNum,oldName,newNum,newName){
-        console.log("端口绑定有改变。。。。。oldNum:"+oldNum+","+oldName+","+newNum+","+newName);
+        // console.log("端口绑定有改变。。。。。oldNum:"+oldNum+","+oldName+","+newNum+","+newName);
         _this.portNum2InterfaceNameMap[oldNum+""] = "";
         _this.portNum2InterfaceNameMap[newNum+""] = newName;
         _this.interfaceName2portNumMap[oldName] = "";

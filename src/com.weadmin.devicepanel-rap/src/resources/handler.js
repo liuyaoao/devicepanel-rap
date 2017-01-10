@@ -129,6 +129,11 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		getModifiedSvgTxt:function(svgtxt){
 			this._svgTxt = svgtxt;//this.svgChartPanel.getModifiedSvgTxt();
 			rap.getRemoteObject( this ).set( "svgTxt", this._svgTxt);
+			var remoteObject = rap.getRemoteObject(this);
+			remoteObject.notify("Selection", {
+				"index" : "svgtxtchanged",
+				"data" : this._svgTxt
+			});
 		},
 		getSizeFromSvg:function(){
 			this._svgSize = this.svgChartPanel.getSize();
@@ -143,23 +148,23 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid,也即端口名（接口名）
 		portBeSelected : function (eventName, svid) {
-			switch(eventName){
-				case "portport":
-					console.log("端口( "+svid+" )被点击，查看端口详情！");
-					break;
-				case "openport":
-					console.log("打开( "+svid+" )端口！");
-					break;
-				case "closeport":
-					console.log("关闭( "+svid+" )端口！");
-					break;
-				case "deviceip":
-					console.log("查看当前端口( "+svid+" )连接设备！");
-					break;
-				case "":
-					console.log("不知道点了哪里了！");
-					break;
-			}
+			// switch(eventName){
+			// 	case "portport":
+			// 		console.log("端口( "+svid+" )被点击，查看端口详情！");
+			// 		break;
+			// 	case "openport":
+			// 		console.log("打开( "+svid+" )端口！");
+			// 		break;
+			// 	case "closeport":
+			// 		console.log("关闭( "+svid+" )端口！");
+			// 		break;
+			// 	case "deviceip":
+			// 		console.log("查看当前端口( "+svid+" )连接设备！");
+			// 		break;
+			// 	case "":
+			// 		console.log("不知道点了哪里了！");
+			// 		break;
+			// }
 			var remoteObject = rap.getRemoteObject(this);
 			remoteObject.notify("Selection", {
 				"index" : eventName,
