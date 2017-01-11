@@ -32,10 +32,10 @@
       this.blinkFlag = 0; //
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
-      this.noNeedBlinkstatusMap = [0]; //不需要闪烁的状态值列表。
-      // 默认：黑色， 0：深灰色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
-      this.statusColorMap = {"":"#080808", 0:"#080808", 1:"#19E807", 2:"#FFF20B", 3:"#FF1411", 4:"#2813E8", 5:"#FF6600"};
-      this.strokeColorMap = {"":"#8819E8", 0:"#FF1411", 1:"#FF11FF", 2:"#9011FF", 3:"#3B12E8", 4:"#FF5C08", 5:"#00FFDC"};
+      this.noNeedBlinkstatusMap = ["","0"]; //不需要闪烁的状态值列表。
+      // 默认：黑色， 0：灰色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
+      this.statusColorMap = {"":"#080808", "0":"#888888", "1":"#19E807", "2":"#FFF20B", "3":"#FF1411", "4":"#2813E8", "5":"#FF6600"};
+      this.strokeColorMap = {"":"#666666", "0":"#FF1411", "1":"#FF11FF", "2":"#9011FF", "3":"#3B12E8", "4":"#FF5C08", "5":"#00FFDC"};
 
       this.blinkLightMap = {}; //哪些指示灯需要闪烁。
       this.initElement();
@@ -112,12 +112,13 @@
   			});
       }
       $(this.container).on('customEvt.portChanged',function(evt,oldNum,oldName,newNum,newName){
-        // console.log("端口绑定有改变。。。。。oldNum:"+oldNum+","+oldName+","+newNum+","+newName);
+        console.log("端口绑定有改变。oldNum:"+oldNum+","+oldName+","+newNum+","+newName);
         _this.portNum2InterfaceNameMap[oldNum+""] = "";
         _this.portNum2InterfaceNameMap[newNum+""] = newName;
         _this.interfaceName2portNumMap[oldName] = "";
         _this.interfaceName2portNumMap[newName] = newNum;
         $(_this.container).find("svg g[data-portnum]").find("path").css("fill","black");
+        $(_this.container).find("svg g[data-portnum]").find("title").text("端口信息");
         _this.updateStatus();
         _this.updateTooltip();
       });
@@ -202,7 +203,8 @@
     updateStatus : function (statusMap) {
       statusMap ? (this.statusMap = statusMap) : null;
       for(var portName in this.statusMap){
-        var value = this.statusMap[portName] || '';
+        this.statusMap[portName] = this.statusMap[portName].toString();
+        var value = this.statusMap[portName].toString();
         var portNum = this.interfaceName2portNumMap[portName] ||'';
         var portEl = this.portJqEleMap[portNum];
         var portLightEl = this.portLightJqElMap[portNum];

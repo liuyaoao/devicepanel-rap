@@ -17,9 +17,7 @@
       this.noUseSvgContainer = null; //没放在页面使用的svg容器，用于重新读取写回svg文件。
       this.mousedownEle = null;
       this.canMoveDialog = false;
-      this.portNameList = ["portName_1","portName_2","portName_3","portName_4","portName_5","portName_6","portName_7","portName_8","portName_9","portName_10"
-        ,"portName_11","portName_12","portName_13","portName_14","portName_15","portName_16","portName_17","portName_18","portName_19","portName_10"
-        ];
+      this.portNameList = [];
       // 重新保存回svg文件时，某些名字需要用原始文件那样大写的方式。
       this.toReplaceStrMap = {
         "documentproperties":"documentProperties", "langid":"langID", "viewmarkup":"viewMarkup",
@@ -43,12 +41,13 @@
       ele.setAttribute("id","portNameDialog_"+this.uniqueId);
       ele.setAttribute("class","portNameDialog menu");
       $(this.container).append( ele );
+
       this.dialogJq = $(ele);
       this.dialogJq.append('<div class="dialogHeader"></div>');
       this.dialogJq.append('<div class="showIn_Out"><div class="triangleUp"></div></div>');
-      // this.dialogJq.append('<div class="dialogCloseBtn">x</div>');
       var ulul = $("<div class='portNameList'><ul></ul></div>");
       this.dialogJq.append(ulul);
+      $(this.dialogJq).append( "<div class='showHideTip' style='display:none;'>隐藏</div>" );
 			this.addNameListToContainer(ulul.find("ul"));
     },
     addEvent:function(){
@@ -65,6 +64,10 @@
           _this.mousedownEle.css({"left":(evt.clientX-offsetPos.left)+"px","top":(evt.clientY-offsetPos.top+10)+"px"});
         }
         if(_this.canMoveDialog){
+          var dialogWidth = _this.dialogJq.width();
+          if((evt.clientX-offsetPos.left-45) < 0 || (evt.clientY-offsetPos.top-15)<0 || (evt.clientX-offsetPos.left-45)>($(_this.container).width()-dialogWidth)){
+            return;
+          }
           _this.dialogJq.css({"left":(evt.clientX-offsetPos.left-45)+"px","top":(evt.clientY-offsetPos.top-15)+"px"});
         }
       });
@@ -95,6 +98,19 @@
       });
       $(this.container).on('mouseleave',function(evt){
         _this.mouseUpDispose();
+      });
+      $(this.container).find('.portNameDialog').on('mouseover','.showIn_Out',function(evt){
+        var that = $(this);
+        var shTip = $(_this.dialogJq).find(".showHideTip");
+        if(that.find(".triangleUp").size()>0){
+          shTip.text("隐藏").show();
+        }else{
+          shTip.text("展示").show();
+        }
+      });
+      $(this.container).find('.portNameDialog').on('mouseout','.showIn_Out',function(evt){
+        var that = $(this);
+        $(_this.dialogJq).find(".showHideTip").hide();
       });
       $(this.container).find('.portNameDialog').on('click','.showIn_Out',function(evt){
         var that = $(this);

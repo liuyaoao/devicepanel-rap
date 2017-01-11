@@ -110,14 +110,14 @@ color:#000;
   position: relative;
   width:100%;
   min-width:100px;
-  height:30px;
+  height:25px;
 }
 .showIn_Out{
   position: absolute;
-  height:30px;
+  height:25px;
   width:18px;
   border-left:1px solid #7B807B;
-  line-height: 30px;
+  line-height: 25px;
   background: #716D6D;
     right: 0;
     top: 0;
@@ -125,23 +125,32 @@ color:#000;
 }
 .triangleUp {
     position: relative;
-    top: 10px;
+    top: 8px;
     left: 4px;
     width: 0;
     height: 0;
-    line-height: 30px;
+    line-height: 25px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-bottom: 10px solid #333333;
 }
 .triangleDown {
     position: relative;
-    top: 10px;
+    top: 8px;
     left: 4px;
     width: 0;
     height: 0;
-    line-height: 30px;
+    line-height: 25px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 10px solid #333333;
+}
+.showHideTip{
+  position: absolute;
+  top: 2px;
+  right: 19px;
+  z-index: 888888;
+  border: 1px solid #ADA5A5;
+  border-radius: 5px;
+  background: #F1E8E8;
 }
