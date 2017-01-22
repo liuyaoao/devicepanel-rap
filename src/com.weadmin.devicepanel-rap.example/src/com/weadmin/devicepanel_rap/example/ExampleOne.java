@@ -29,16 +29,28 @@ public class ExampleOne extends AbstractEntryPoint{
 	protected void createContents(Composite parent) {
 		parent.setLayout(new GridLayout(3,false));
 //		parent.setLayout(null);
-		Button button = new Button(parent, SWT.PUSH);
+		Composite parents = new Composite(parent, SWT.NONE);
+		parents.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		parents.setLayout(new GridLayout(1, false));
+		
+		Composite composite = new Composite(parents, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		composite.setLayout(new GridLayout(4, false));
+		
+		Button button = new Button(composite, SWT.PUSH);
 		button.setText("Refresh");
-		Button zoomInBtn = new Button(parent, SWT.PUSH);
+		Button zoomInBtn = new Button(composite, SWT.PUSH);
 		zoomInBtn.setText("zoomIn(+)");
-		Button zoomOutBtn = new Button(parent, SWT.PUSH);
+		Button zoomOutBtn = new Button(composite, SWT.PUSH);
 		zoomOutBtn.setText("zoomOut(-)");
-		Button saveModifiedSvgBtn = new Button(parent, SWT.PUSH);
+		Button saveModifiedSvgBtn = new Button(composite, SWT.PUSH);
 		saveModifiedSvgBtn.setText("save");
 
-		DevicePanelSvg deviceSvg = new DevicePanelSvg(parent, SWT.NONE);
+		Composite composite2 = new Composite(parents, SWT.NONE);
+		composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		composite2.setLayout(new GridLayout(1, false));
+		
+		DevicePanelSvg deviceSvg = new DevicePanelSvg(composite2, SWT.NONE);
 //		deviceSvg.setBounds(20, 0, 1000, 600);
 		String sysObjId = "svg07"; //svg file name.
 		deviceSvg.addOneSvgPanelById(sysObjId);
