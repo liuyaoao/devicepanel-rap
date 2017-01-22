@@ -165,7 +165,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			var remoteObject = rap.getRemoteObject(this);
 			remoteObject.notify("Selection", {
 				"index" : "svg_initialized",
-				"data" : -1
+				"data" : "-1"
 			});
 		},
 		// 大小自适应

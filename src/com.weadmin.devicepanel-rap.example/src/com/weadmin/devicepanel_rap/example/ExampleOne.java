@@ -3,21 +3,21 @@ package com.weadmin.devicepanel_rap.example;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
-
 import org.apache.commons.io.FileUtils;
 import org.eclipse.rap.json.JsonObject;
-import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 
 import com.weadmin.devicepanel_rap.DevicePanelSvg;
 
@@ -25,7 +25,6 @@ public class ExampleOne extends AbstractEntryPoint{
 
 	private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	protected void createContents(Composite parent) {
 		parent.setLayout(new GridLayout(3,false));
@@ -49,13 +48,29 @@ public class ExampleOne extends AbstractEntryPoint{
 			private static final long serialVersionUID = 1L;
 			public void handleEvent(Event event) {
 				String eventag = event.text;
-//				System.out.println(portindex);
 				if (eventag.equals("openport")) {
 //					MsgBox.ShowError("打开端口！");
 				} else if (eventag.equals("deviceip")) {
 //					MsgBox.ShowError("查看端口连接的设备！");
-				}else if(eventag.toLowerCase().equals("portport")){
-					System.out.println("点击了端口！");
+				}else if(eventag.toLowerCase().equals("portmenu")){
+					String networkNodeName = (String) event.data;
+					Shell shell = deviceSvg.getShell();
+					Menu menu = new Menu(shell,SWT.POP_UP);
+					shell.setMenu(menu);
+					menu.setLocation(event.x, event.y);
+					menu.setVisible(true);
+					MenuItem portProperties = new MenuItem(menu, SWT.PUSH);
+					portProperties.setText("端口属性");
+					portProperties.addSelectionListener(new SelectionAdapter() {
+						private static final long serialVersionUID = 1L;
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							PortPropertiesDlg portDlg = new PortPropertiesDlg("huawei", "xiaomi");
+							portDlg.setInterfaceNames(createInterfaceNameArr(50));
+							portDlg.setInterfaceName(networkNodeName);
+							portDlg.open();
+						}
+					});
 				}else if(eventag.toLowerCase().equals("svg_initialized")){
 					System.out.println("svg_initialized");
 					deviceSvg.setStatuss(createStatusMap(50));
@@ -77,14 +92,18 @@ public class ExampleOne extends AbstractEntryPoint{
 
 
 		button.addSelectionListener(new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				@SuppressWarnings("unused")
 				JsonObject tempSize = deviceSvg.getSvgSize();
 				deviceSvg.refreshAll(createStatusMap(50),createTooltipMap(50));
 
 			}
 		});
 		zoomInBtn.addSelectionListener(new SelectionAdapter() { //zoom in (+)
+			private static final long serialVersionUID = 1L;
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				JsonObject tempSize = deviceSvg.getSvgSize();
@@ -96,6 +115,8 @@ public class ExampleOne extends AbstractEntryPoint{
 			}
 		});
 		zoomOutBtn.addSelectionListener(new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				JsonObject tempSize = deviceSvg.getSvgSize();
@@ -107,6 +128,8 @@ public class ExampleOne extends AbstractEntryPoint{
 			}
 		});
 		saveModifiedSvgBtn.addSelectionListener(new SelectionAdapter() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String svgTxt = deviceSvg.getNewSvgTxt();

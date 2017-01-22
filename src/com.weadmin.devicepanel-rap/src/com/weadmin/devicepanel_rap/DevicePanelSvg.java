@@ -1,36 +1,23 @@
 package com.weadmin.devicepanel_rap;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.eclipse.rap.json.JsonObject;
 import org.eclipse.rap.json.JsonValue;
-import org.eclipse.rap.rwt.RWT;
-import org.eclipse.rap.rwt.service.ResourceManager;
 import org.eclipse.rap.json.JsonArray;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.internal.SWTEventListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.internal.SWTEventListener;
 import org.eclipse.swt.widgets.Listener;
 
-import com.weadmin.devicepanel_rap.SVWidgetBase.CustomRes;
-
+@SuppressWarnings("restriction")
 public class DevicePanelSvg extends SVWidgetBase {
 
-	 private static final String REMOTE_TYPE = "svgdevicepanel.devicepanelsvgjs";
+	 @SuppressWarnings("unused")
+	private static final String REMOTE_TYPE = "svgdevicepanel.devicepanelsvgjs";
 	 private static final long serialVersionUID = -7580109674486263420L;
 	 private String sysObjId = "";
 	 private String svgTxt = "";
@@ -47,6 +34,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 		this.setMenudesc("打开端口:关闭端口:当前端口连接设备");
 	}
 
+	@SuppressWarnings("unused")
 	public void addOneSvgPanelById(String sysobjid){
 		setSysObjId(sysobjid);
 		ClassLoader classLoader = SVWidgetBase.class.getClassLoader();
@@ -164,6 +152,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 	}
 
 // ==================================
+	@SuppressWarnings("unused")
 	private static JsonArray jsonArray(int[] values) {
 		JsonArray array = new JsonArray();
 		for (int i = 0; i < values.length; i++) {
@@ -233,7 +222,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 		if ("Selection".equals(eventName)) {
 			Event event = new Event();
 			event.text = parameters.get("index").asString();
-			event.data =  parameters.get("data");
+			event.data =  parameters.get("data").asString();
 
 			if(event.text.toLowerCase().equals("svgtxtchanged")){
 				event.data = this.svgTxtPrefix + parameters.get("data").asString();
