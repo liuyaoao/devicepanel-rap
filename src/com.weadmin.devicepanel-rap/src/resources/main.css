@@ -112,6 +112,13 @@ color:#000;
   min-width:100px;
   height:25px;
 }
+.dialogHeader p{
+  line-height: 25px;
+  font-size: 14px;
+  color: #FFF;
+  margin: 0 0 0 23px;
+  text-align: left;
+}
 .showIn_Out{
   position: absolute;
   height:25px;

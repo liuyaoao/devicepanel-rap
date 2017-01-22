@@ -43,7 +43,7 @@
       $(this.container).append( ele );
 
       this.dialogJq = $(ele);
-      this.dialogJq.append('<div class="dialogHeader"></div>');
+      this.dialogJq.append('<div class="dialogHeader"><p>接口列表</p></div>');
       this.dialogJq.append('<div class="showIn_Out"><div class="triangleUp"></div></div>');
       var ulul = $("<div class='portNameList'><ul></ul></div>");
       this.dialogJq.append(ulul);

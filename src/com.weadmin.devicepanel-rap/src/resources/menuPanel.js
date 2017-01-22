@@ -1,4 +1,4 @@
-
+// now is deprecated;2017-01-22
 ;(function(cxt){
   if (!window.svgdevicepanel) {
 		window.svgdevicepanel = {};

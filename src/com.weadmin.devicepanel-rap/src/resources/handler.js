@@ -53,18 +53,10 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			if (this.element.parentNode) {
 				rap.off("render", this.onRender);
 				// Creates the graph inside the given container
-				this.menuPanel = new svgdevicepanel.MenuPanel({
-					container:this.element,
-					uniqueId:this._uniqueId,
-					menuDesc:this._menudesc,
-					clickMenuCall:function(eventName,svid){
-						_this.clickMenuCall(eventName,svid);
-					}
-				});
+
 				this.svgChartPanel = new svgdevicepanel.SvgChartPanel({
 					container:this.element,
 					uniqueId:this._uniqueId,
-					menuPanel:this.menuPanel,
 					svgTxt:this._svgTxt,
 					statusMap:this._statussMap,
 					tooltipDataMap:this._tooltipDataMap,
@@ -78,9 +70,6 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				});
 				this.getSizeFromSvg();
 				this.svgInitializedCall();
-				// setTimeout(function(){
-				// 	_this.refreshAll();
-				// }, 100);
 				setTimeout(function(){ _this.updateContainerSize(); }, 200);
 				rap.getRemoteObject( this ).set( "svgSize", JSON.stringify(this._svgSize));
 				rap.on("send", this.onSend);
@@ -90,17 +79,12 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 
 		destroy : function () {
 			rap.off("send", this.onSend);
-			this.menuPanel && this.menuPanel.dispose();
 			this.svgChartPanel && this.svgChartPanel.dispose();
 			(this.element && this.element.parentNode) ? this.element.parentNode.removeChild(this.element): null;
 		},
 		onSend : function() {
 			// rap.getRemoteObject( this ).set( "model", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
 			// rap.getRemoteObject( this ).call( "handleCallRefreshData", "123456789"); //设置后端的值，还有其他两个方法:call(method,properties):调用后端的方法,notify(event,properties);
-		},
-		clickMenuCall:function(eventName,selectedNodeId){
-			this._selectnodeid = selectedNodeId;
-			this.portBeSelected(eventName, selectedNodeId);
 		},
 		setMenudesc : function (menudesc) {
 			this._menudesc = menudesc;
@@ -148,6 +132,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid,也即端口名（接口名）
 		portBeSelected : function (eventName, svid) {
+			this._selectnodeid = svid;
 			// switch(eventName){
 			// 	case "portport":
 			// 		console.log("端口( "+svid+" )被点击，查看端口详情！");
@@ -160,6 +145,9 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			// 		break;
 			// 	case "deviceip":
 			// 		console.log("查看当前端口( "+svid+" )连接设备！");
+			// 		break;
+			// 	case "portmenu":
+			// 		console.log("show 端口菜单！");
 			// 		break;
 			// 	case "":
 			// 		console.log("不知道点了哪里了！");

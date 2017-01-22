@@ -9,7 +9,6 @@
   SvgChartPanel.prototype = {
     init:function(options){
       this.container = options.container;
-      this.menuPanel = options.menuPanel;
       this.uniqueId = options.uniqueId;
       this.svgTxt = options.svgTxt || '';
       this.portBeSelectedCall = options.portBeSelectedCall;
@@ -76,19 +75,20 @@
       for(var key in this.portJqEleMap){
         var portRect = this.portJqEleMap[key];
         portRect.on("contextmenu", function(event){ //响应鼠标右键事件
-          var pos = $(this).position();
-          var menuWidth = _this.menuPanel.getWidth();
-          var menuHeight = _this.menuPanel.getHeight();
-          var svgPos = $(this).closest("svg").position();
-    			_this.selectedNodeId = $(this).attr("data-portname");
-          var destPos = {left:pos.left-svgPos.left,top:pos.top-svgPos.top};
-          if(destPos.left+menuWidth+20>_this.svgWidth){
-            destPos.left = _this.svgWidth-menuWidth-20;
-          }
-          if(destPos.top+menuHeight>_this.svgHeight){
-            destPos.top = _this.svgHeight-menuHeight;
-          }
-    			_this.menuPanel.showMenuPanel(destPos,_this.selectedNodeId);
+          _this.selectedNodeId = $(this).attr("data-portname");
+          // var pos = $(this).position();
+          // var menuWidth = _this.menuPanel.getWidth();
+          // var menuHeight = _this.menuPanel.getHeight();
+          // var svgPos = $(this).closest("svg").position();
+          // var destPos = {left:pos.left-svgPos.left,top:pos.top-svgPos.top};
+          // if(destPos.left+menuWidth+20>_this.svgWidth){
+          //   destPos.left = _this.svgWidth-menuWidth-20;
+          // }
+          // if(destPos.top+menuHeight>_this.svgHeight){
+          //   destPos.top = _this.svgHeight-menuHeight;
+          // }
+    			// _this.menuPanel.showMenuPanel(destPos,_this.selectedNodeId);
+          _this.portBeSelected("portmenu" , _this.selectedNodeId);
     			event.preventDefault();
         });
   			portRect.on("click", function (d, index) {
@@ -106,9 +106,6 @@
           $(this).attr('class',that.attr('class').split(" ")[0]);
           $(this).removeClass('mouseover'+_this.uniqueId);
   				$(this).find("path").css("stroke-width", "0");
-          setTimeout(function(){ //this is necessary
-            _this.menuPanel.hideMenuPanel();
-          },50);
   			});
       }
       $(this.container).on('customEvt.portChanged',function(evt,oldNum,oldName,newNum,newName){
@@ -203,6 +200,7 @@
     updateStatus : function (statusMap) {
       statusMap ? (this.statusMap = statusMap) : null;
       for(var portName in this.statusMap){
+        if(isNaN(this.statusMap[portName])){continue;}
         this.statusMap[portName] = this.statusMap[portName].toString();
         var value = this.statusMap[portName].toString();
         var portNum = this.interfaceName2portNumMap[portName] ||'';
