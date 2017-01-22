@@ -64,8 +64,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 					getModifiedSvgTxtCall:function(svgtxt){
 						_this.getModifiedSvgTxt(svgtxt);
 					},
-					portBeSelectedCall:function(eventName,svid){
-						_this.portBeSelected(eventName,svid);
+					portBeSelectedCall:function(eventName,svid,position){
+						_this.portBeSelected(eventName,svid, position);
 					}
 				});
 				this.getSizeFromSvg();
@@ -130,8 +130,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 				_this.svgChartPanel.updateTooltip(_this._tooltipDataMap);
 			},10);
 		},
-		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid,也即端口名（接口名）
-		portBeSelected : function (eventName, svid) {
+		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid,也即端口名（接口名）,position:鼠标的位置，
+		portBeSelected : function (eventName, svid, position) {
 			this._selectnodeid = svid;
 			// switch(eventName){
 			// 	case "portport":
@@ -156,7 +156,9 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			var remoteObject = rap.getRemoteObject(this);
 			remoteObject.notify("Selection", {
 				"index" : eventName,
-				"data" : svid
+				"data" : svid,
+				"left":position.left,
+				"top":position.top
 			});
 		},
 		svgInitializedCall:function(){

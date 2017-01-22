@@ -88,11 +88,12 @@
           //   destPos.top = _this.svgHeight-menuHeight;
           // }
     			// _this.menuPanel.showMenuPanel(destPos,_this.selectedNodeId);
-          _this.portBeSelected("portmenu" , _this.selectedNodeId);
+          _this.portBeSelected("portmenu" , _this.selectedNodeId, {left:event.clienX,top:event.clientY});
     			event.preventDefault();
         });
-  			portRect.on("click", function (d, index) {
-  				_this.portBeSelected("portport" , $(this).attr('data-portname'));
+  			portRect.on("click", function (event) {
+          console.log("click event:",event);
+  				_this.portBeSelected("portport" , $(this).attr('data-portname'),{left:event.clienX,top:event.clientY});
   			});
         portRect.on("mouseover", function () {
           var that = $(this);
@@ -232,8 +233,8 @@
         _this.portNameDialog.updateNameList(interfaceNameList);
       },100);
     },
-    portBeSelected:function(eventName,portName){
-      this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,portName]);
+    portBeSelected:function(eventName,portName,position){
+      this.portBeSelectedCall && this.portBeSelectedCall.apply(null,[eventName,portName,position]);
     },
     getSize:function(){
       return {width:+(this.svgWidth.toFixed(2)), height:+(this.svgHeight.toFixed(2))};
