@@ -234,8 +234,13 @@ public class DevicePanelSvg extends SVWidgetBase {
 			Event event = new Event();
 			event.text = parameters.get("index").asString();
 			event.data =  parameters.get("data");
+
 			if(event.text.toLowerCase().equals("svgtxtchanged")){
 				event.data = this.svgTxtPrefix + parameters.get("data").asString();
+			}
+			if(event.text.toLowerCase().equals("portmenu") || event.text.toLowerCase().equals("portport")){
+				event.x =  parameters.get("x").asInt();
+				event.y =  parameters.get("y").asInt();
 			}
 			notifyListeners(SWT.Selection, event);
 		}

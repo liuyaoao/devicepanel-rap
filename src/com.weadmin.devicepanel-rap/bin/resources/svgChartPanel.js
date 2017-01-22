@@ -88,12 +88,12 @@
           //   destPos.top = _this.svgHeight-menuHeight;
           // }
     			// _this.menuPanel.showMenuPanel(destPos,_this.selectedNodeId);
-          _this.portBeSelected("portmenu" , _this.selectedNodeId, {left:event.clienX,top:event.clientY});
+          _this.portBeSelected("portmenu" , _this.selectedNodeId, {left:event.clientX,top:event.clientY});
     			event.preventDefault();
         });
   			portRect.on("click", function (event) {
           console.log("click event:",event);
-  				_this.portBeSelected("portport" , $(this).attr('data-portname'),{left:event.clienX,top:event.clientY});
+  				_this.portBeSelected("portport" , $(this).attr('data-portname'),{left:event.clientX,top:event.clientY});
   			});
         portRect.on("mouseover", function () {
           var that = $(this);

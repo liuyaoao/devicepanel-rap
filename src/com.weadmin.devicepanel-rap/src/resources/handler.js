@@ -131,7 +131,7 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			},10);
 		},
 		// 当对端口有任何操作时触发服务端更新。svid 也就是nodeid,也即端口名（接口名）,position:鼠标的位置，
-		portBeSelected : function (eventName, svid, position) {
+		portBeSelected : function (eventName, svid, pos) {
 			this._selectnodeid = svid;
 			// switch(eventName){
 			// 	case "portport":
@@ -157,8 +157,8 @@ var DEVICEPANEL_RAP_BASEPATH = "rwt-resources/devicepanelsvgjs/";
 			remoteObject.notify("Selection", {
 				"index" : eventName,
 				"data" : svid,
-				"left":position.left,
-				"top":position.top
+				"x":pos["left"],
+				"y":pos["top"]
 			});
 		},
 		svgInitializedCall:function(){
