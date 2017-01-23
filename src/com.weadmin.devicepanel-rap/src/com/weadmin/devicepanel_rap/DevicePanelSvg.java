@@ -245,7 +245,7 @@ public class DevicePanelSvg extends SVWidgetBase {
 		res.add(new CustomRes("main.css", true, true));
 		res.add(new CustomRes("jquery.js", true, false));
 		res.add(new CustomRes("portNameDialog.js", true, false));
-		res.add(new CustomRes("menuPanel.js", true, false));
+//		res.add(new CustomRes("menuPanel.js", true, false));
 		res.add(new CustomRes("svgChartPanel.js", true, false));
 		res.add(new CustomRes("handler.js", true, false));
 		return res;
