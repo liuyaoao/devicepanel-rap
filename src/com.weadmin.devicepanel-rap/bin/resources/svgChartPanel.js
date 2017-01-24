@@ -32,10 +32,10 @@
       this.intervalTimer = null;
       this.paramNameMap = {"":"", "SysOid":"sysObjId", "容器号":"containerNum", "端口号":"portNum", "端口灯号":"portLightNum", "端口数":"portCount", "端口灯数":"portLightCount"};
       this.noNeedBlinkstatusMap = ["","0"]; //不需要闪烁的状态值列表。
-      // 默认：黑色， 0：灰色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
+      // 默认：灰色， 0：黑色， 1：绿色。2：黄色。3：红色。 4：蓝色，5：橘黄色
       this.statusColorMap = {"":"#888888", "0":"#080808", "1":"#19E807", "2":"#FFF20B", "3":"#FF1411", "4":"#2813E8", "5":"#FF6600"};
       this.strokeColorMap = {"":"#666666", "0":"#FF1411", "1":"#FF11FF", "2":"#9011FF", "3":"#3B12E8", "4":"#FF5C08", "5":"#00FFDC"};
-
+      this.statusDescMap = {"":"未绑定","0":"down","1":"正常","2":"警告","3":"危险"}; //端口状态的描述。
       this.blinkLightMap = {}; //哪些指示灯需要闪烁。
       this.initElement();
     },
@@ -45,7 +45,7 @@
       var element = this.svgContainer= document.createElement( "div" );
 	    element.style.position = "absolute";
 	    element.style.left = "0";
-	    element.style.top = "0";
+	    element.style.top = "30px";
 			element.style.overflow="auto";
 			// element.style.backgroundColor ="#7f707f";
 			$(element).addClass("svgContainer").html(this.svgTxt);
@@ -118,7 +118,7 @@
         _this.portNum2InterfaceNameMap[newNum+""] = newName;
         _this.interfaceName2portNumMap[oldName] = "";
         _this.interfaceName2portNumMap[newName] = newNum;
-        $(_this.container).find("svg g[data-portnum]").find("path").css("fill","black");
+        $(_this.container).find("svg g[data-portnum]").find("path").css("fill","#888888");
         $(_this.container).find("svg g[data-portnum]").find("title").text("端口信息");
         _this.updateStatus();
         _this.updateTooltip();
@@ -271,10 +271,17 @@
       this.interfaceName2portNumMap[interfaceName] = portNum;
     },
     addHeaderDesc:function(){
+      var _this = this;
       var $cont = $(".headerDesc ul");
-      var statusDescMap = {"":"未绑定","0":"down","1":"正常","2":"警告","3":"危险"};
-      $.each(this.statusColorMap,function(key,value){
-        $cont.append('<li style="height:20px;"><div style="width:20px;background:'+value+';"></div>:'+statusDescMap[key]+'</li>');
+
+      $.each(_this.statusDescMap,function(key,value){
+        var str = '<li style="height:20px;"><div style="width:20px;height:20px;display:inline-block;background:'+
+          _this.statusColorMap[key]+';"></div></li><li style="margin-right:10px;">:'+_this.statusDescMap[key]+'</li>';
+        if(key == ""){
+            $cont.prepend(str);
+        }else{
+          $cont.append(str);
+        }
       });
     },
     getValueFromStr:function(str){
