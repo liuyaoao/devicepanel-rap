@@ -73,12 +73,14 @@
       });
       this.dialogJq.find("ul").on('mousedown','li a',function(evt){
         $(this).addClass('mousedownBack');
+        var offsetPos = $(_this.container).offset();
         var portName = $.trim($(this).text());
         _this.mousedownEle = $(this).clone();
         _this.mousedownEle.attr("class","mousedown"+_this.uniqueId);
         _this.mousedownEle.attr("data-portname",portName);
         _this.mousedownEle.addClass("mousedownEle");
         $(_this.container).append( _this.mousedownEle );
+        _this.mousedownEle.css({"left":(evt.clientX-offsetPos.left)+"px","top":(evt.clientY-offsetPos.top+10)+"px"});
         // _this.mousedownEle.css({"position":"absolute","left":evt.clientX+"px","top":evt.clienY+"px"});
         // console.log("mousedown portName:"+portName);
       });

@@ -1,5 +1,18 @@
-.headerDesc ul {list-style:none;margin:0px -39px;}
-.headerDesc ul li {float:left;}
+.headerDesc ul {
+  list-style:none;
+  padding:0;
+  float: left;
+  position: relative;
+  left: 50%;
+      margin: 0;
+}
+.headerDesc ul li {
+  float: left;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  left: -50%;
+}
 
 .menu {
 font-family: arial, sans-serif;

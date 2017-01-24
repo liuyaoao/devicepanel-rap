@@ -273,7 +273,7 @@
     addHeaderDesc:function(){
       var _this = this;
       var $cont = $(".headerDesc ul");
-
+      $(".headerDesc").css({"position":"relative","width":$(".svgContainer").width()/2+"px"});
       $.each(_this.statusDescMap,function(key,value){
         var str = '<li style="height:20px;"><div style="width:20px;height:20px;display:inline-block;background:'+
           _this.statusColorMap[key]+';"></div></li><li style="margin-right:10px;">:'+_this.statusDescMap[key]+'</li>';
