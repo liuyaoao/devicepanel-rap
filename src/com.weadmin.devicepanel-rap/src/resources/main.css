@@ -1,3 +1,4 @@
+
 .headerDesc ul {
   list-style:none;
   padding:0;
@@ -13,6 +14,8 @@
   text-align: center;
   left: -50%;
 }
+.clearfix:after {content:"."; display:block; height:0;  clear:both; }
+.clearfix { *zoom:1; }
 
 .menu {
 font-family: arial, sans-serif;

@@ -277,15 +277,19 @@
     addHeaderDesc:function(){
       var _this = this;
       var $cont = $(".headerDesc ul");
+      // $cont.addClass("clearfix");
       $.each(_this.statusDescMap,function(key,value){
-        var str = '<li style="height:20px;"><div style="width:20px;height:20px;display:inline-block;background:'+
-          _this.statusColorMap[key]+';"></div></li><li style="margin-right:10px;">:'+_this.statusDescMap[key]+'</li>';
+        var str = '<li style="">'+_this.statusDescMap[key]+':</li><li style="height:20px;"><div style="width:20px;height:20px;margin-right:10px;display:inline-block;background:'+
+          _this.statusColorMap[key]+';"></div></li>';
         if(key == ""){
-            $cont.prepend(str);
+          $cont.prepend('<li>接口状态分为：</li>'+str);
+        }else if(key == "1"){
+          $cont.append('<li> ;up:根据接口总流量可分为：</li>'+str);
         }else{
           $cont.append(str);
         }
       });
+      // $(".headerDesc").append('<br><div style="color:red;font-size:14px;text-align: center;clear:both;margin-top: 6px; display:block; height:0;">注：未绑定:灰色，down:黑色，up:根据接口总流量可分为:正常，危险，警告</div>');
       setTimeout(function(){
         $(".headerDesc").css({"position":"relative","width":$(".svgContainer").width()/2+"px"});
       },1000);
