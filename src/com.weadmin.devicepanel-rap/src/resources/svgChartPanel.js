@@ -279,12 +279,12 @@
       var $cont = $(".headerDesc ul");
       // $cont.addClass("clearfix");
       $.each(_this.statusDescMap,function(key,value){
-        var str = '<li style="">'+_this.statusDescMap[key]+':</li><li style="height:20px;"><div style="width:20px;height:20px;margin-right:10px;display:inline-block;background:'+
-          _this.statusColorMap[key]+';"></div></li>';
+        var str = '<li style="height:20px;"><div style="width:20px;height:20px;display:inline-block;background:'+
+          _this.statusColorMap[key]+';"></div></li><li style="margin-left:5px;margin-right:10px;">'+_this.statusDescMap[key]+'</li>';
         if(key == ""){
           $cont.prepend('<li style="font-weight:600;">接口状态分为：</li>'+str);
         }else if(key == "1"){
-          $cont.append('<li style="margin-left:26px;font-weight:600;"> 接口UP时总流量值状态：</li>'+str);
+          $cont.append('<li style="margin-left:30px;font-weight:600;"> 接口UP时总流量值状态：</li>'+str);
         }else{
           $cont.append(str);
         }
