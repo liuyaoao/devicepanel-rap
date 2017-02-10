@@ -47,7 +47,8 @@
       this.dialogJq.append('<div class="showIn_Out"><div class="triangleUp"></div></div>');
       var ulul = $("<div class='portNameList'><ul></ul></div>");
       this.dialogJq.append(ulul);
-      $(this.dialogJq).append( "<div class='showHideTip' style='display:none;'>隐藏</div>" );
+      this.dialogJq.append( "<div class='showHideTip' style='display:none;'>隐藏</div>" );
+      this.dialogJq.css({"top":"40px"});
 			this.addNameListToContainer(ulul.find("ul"));
     },
     addEvent:function(){

@@ -282,9 +282,9 @@
         var str = '<li style="">'+_this.statusDescMap[key]+':</li><li style="height:20px;"><div style="width:20px;height:20px;margin-right:10px;display:inline-block;background:'+
           _this.statusColorMap[key]+';"></div></li>';
         if(key == ""){
-          $cont.prepend('<li>接口状态分为：</li>'+str);
+          $cont.prepend('<li style="font-weight:600;">接口状态分为：</li>'+str);
         }else if(key == "1"){
-          $cont.append('<li> up:根据接口总流量可分为：</li>'+str);
+          $cont.append('<li style="margin-left:26px;font-weight:600;"> 接口UP时总流量值状态：</li>'+str);
         }else{
           $cont.append(str);
         }
