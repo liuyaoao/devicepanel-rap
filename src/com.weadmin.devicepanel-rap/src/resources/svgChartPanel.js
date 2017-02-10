@@ -284,7 +284,7 @@
         if(key == ""){
           $cont.prepend('<li>接口状态分为：</li>'+str);
         }else if(key == "1"){
-          $cont.append('<li> ;up:根据接口总流量可分为：</li>'+str);
+          $cont.append('<li> up:根据接口总流量可分为：</li>'+str);
         }else{
           $cont.append(str);
         }
